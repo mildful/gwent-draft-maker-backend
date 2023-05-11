@@ -1,0 +1,59 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "@typescript-eslint/consistent-type-assertions": ["error", {"assertionStyle": "as"}],
+    "@typescript-eslint/explicit-function-return-type": ["error", {"allowExpressions": true}],
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/no-angle-bracket-type-assertion": "off",
+    "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/no-parameter-properties": "off",
+    "class-methods-use-this": "off",
+    "complexity": ["error", 10],
+    "import/extensions": "off",
+    "import/no-default-export": "error",
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "off",
+    "lines-between-class-members": "off",
+    "max-len": ["error", {"code": 135}],
+    "no-console": ["error", {"allow": ["warn", "error"]}],
+    "no-continue": "off",
+    "no-dupe-class-members": "off",
+    "no-inner-declarations": "off",
+    "no-multiple-empty-lines": ["error", {"max": 1, "maxEOF": 0, "maxBOF": 0}],
+    "no-restricted-globals": "off",
+    "no-restricted-syntax": "off",
+    "no-underscore-dangle": "off",
+    "no-useless-constructor": "off",
+    "no-param-reassign": "off",
+    "no-empty-function": "off",
+    "object-curly-newline": ["error", {"ImportDeclaration": {"consistent": true}}],
+    "linebreak-style": 0
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/**/*.spec.ts"],
+      "rules": {
+        "max-len": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-undef": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/restrict-template-expressions": "off"
+      }
+    }
+  ]
+}

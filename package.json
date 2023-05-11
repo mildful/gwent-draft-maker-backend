@@ -1,0 +1,44 @@
+{
+  "name": "wall-of-pixels-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {
+    "start-dependency": "docker-compose -f docker-compose.yml --project-name wall-of-pixels -f docker-compose.yml up -d",
+    "rm-dependency": "docker-compose -f docker-compose.yml --project-name wall-of-pixels -f docker-compose.yml down --remove-orphans",
+    "build": "rimraf build && tsc -p tsconfig.build.json",
+    "start": "cross-env NODE_ENV=development nodemon -L --watch src -e ts --exec 'ts-node --files --project tsconfig.json src/index.ts'",
+    "test": "cross-env jest --maxWorkers=1"
+  },
+  "author": "Naryaneth",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "async_hooks": "^1.0.0",
+    "axios": "^1.4.0",
+    "config": "^3.3.9",
+    "cookie-parser": "^1.4.6",
+    "date-fns": "^2.30.0",
+    "express": "^4.18.2",
+    "helmet": "^7.0.0",
+    "http": "^0.0.1-security",
+    "inversify": "^6.0.1",
+    "inversify-express-utils": "^6.4.3",
+    "mongodb": "^5.4.0",
+    "on-finished": "^2.4.1",
+    "on-headers": "^1.0.2",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/config": "^3.3.0",
+    "@types/cookie-parser": "^1.4.3",
+    "@types/express": "^4.17.17",
+    "@types/helmet": "^4.0.0",
+    "@types/jest": "^29.5.1",
+    "cross-env": "^7.0.3",
+    "jest": "^29.5.0",
+    "jest-dynalite": "^3.6.1",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1"
+  }
+}

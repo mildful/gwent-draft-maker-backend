@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "removeComments": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "alwaysStrict": true,
+    "outDir": "build",
+    "resolveJsonModule": true,
+    "allowJs": true
+  },
+  "include": [
+    "src",
+    "jest.config.ts",
+    "definitions.d.ts",
+    // "tests/",
+    "scripts/",
+    "config"
+  ]
+}
