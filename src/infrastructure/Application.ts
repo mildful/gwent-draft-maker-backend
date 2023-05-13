@@ -3,18 +3,21 @@ import * as http from 'http';
 import axios from 'axios';
 import { BindingScopeEnum, Container } from 'inversify';
 
-import Logger from '../domain/models/Logger';
+import Logger from '../domain/models/utils/Logger';
 import ConsoleLogger from './utils/ConsoleLogger';
-import Context from '../domain/models/Context';
+import Context from '../domain/models/utils/Context';
 import ExecutionContext from './utils/ExecutionContext';
-import Clock from '../domain/models/Clock';
+import Clock from '../domain/models/utils/Clock';
+import { AuthConfig } from '../domain/models/utils/Config';
 import SystemClock from './utils/SystemClock';
 
+import UserService from '../application/services/UserService';
+import Server from './Server';
 import UserRepository from './repositories/UserRepository';
 import MongoDbLayer from './repositories/mongodb/MongoDbLayer';
 import MongoDbUserRepository from './repositories/mongodb/implementations/MongoDbUserRepository';
-import UserService from '../application/services/UserService';
-import Server from './Server';
+import { AbstractJwtSessionProvider } from './providers/session/AbstractJwtSessionProvider';
+import { JwtBearerSessionProvider } from './providers/session/JwtBearerSessionProvider';
 
 export class Application {
   private server: Server;
@@ -42,7 +45,7 @@ export class Application {
     this.bindUtils();
     await this.bindRepositories();
     this.bindServices();
-    // this.bindProviders();
+    this.bindProviders();
     this.initAxios();
 
     this.server = new Server(
@@ -75,6 +78,8 @@ export class Application {
       .whenTargetNamed('Enabled');
     this.container.bind<string>('Server').toConstantValue(config.get('server.version'))
       .whenTargetNamed('Version');
+    this.container.bind<AuthConfig>('Config').toConstantValue(config.get('providers.auth'))
+      .whenTargetNamed('Auth');
   }
 
   private async bindRepositories(): Promise<void> {
@@ -89,6 +94,12 @@ export class Application {
 
   private bindServices(): void {
     this.container.bind<UserService>('Service').to(UserService).whenTargetNamed('User');
+  }
+
+  private bindProviders(): void {
+    this.container.bind<AbstractJwtSessionProvider>('Provider').toConstantValue(
+      new JwtBearerSessionProvider(this.context, this.logger, config.get('providers.session.jwtBearer')),
+    ).whenTargetNamed('Session');
   }
 
   private loadEnvVars(): void {

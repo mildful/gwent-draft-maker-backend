@@ -1,4 +1,4 @@
-import { LogLevel } from '../src/domain/models/Logger';
+import { LogLevel } from '../src/domain/models/utils/Logger';
 
 module.exports = {
   server: {
@@ -15,6 +15,13 @@ module.exports = {
   database: {
     mongodb: {
       uri: 'mongodb://root:example@mongo:27017/',
+    },
+  },
+  providers: {
+    session: {
+      jwtBearer: {
+        tokenPassPhrase: 'nemrodRocks',
+      },
     },
   },
 };

@@ -1,18 +1,75 @@
+import { from as MUUID } from "uuid-mongodb";
 import User from "../../../../domain/models/User";
 import UserRepository from "../../UserRepository";
 import MongoDbRepository from "../MongoDbRepository";
 import { CollectionNames } from "../CollectionDefinitions";
+import MongoDbEntities from "../entities/MongoDbUserEntity";
+import { MongoDbUserSerializer } from '../serializers/MongoDbUserSerializer';
+import { UpdateFilter } from "mongodb";
 
 export default class MongoDbUserRepository extends MongoDbRepository implements UserRepository {
-  async getById(id: string): Promise<User> {
-    const result = await this.collections(CollectionNames.USERS).findOne({
-      id,
-    });
-    this.logger.debug('coucou', result);
-    throw new Error("Method not implemented.");
+  public async getById(id: string): Promise<User | null> {
+    this.logger.debug('[MongoDbUserRepository][getById] Finding user by id', id);
+
+    const result = await this
+      .collections<MongoDbEntities[CollectionNames.USERS]>(CollectionNames.USERS)
+      .findOne({
+        id,
+      });
+
+    return MongoDbUserSerializer.toModel(result);
   }
 
-  async save(user: User): Promise<void> {
-    throw new Error("Method not implemented.");
+  public async getByEmail(email: string): Promise<User | null> {
+    this.logger.debug('[MongoDbUserRepository][getByEmail] Finding user by mail', email);
+
+    const result = await this
+      .collections<MongoDbEntities[CollectionNames.USERS]>(CollectionNames.USERS)
+      .findOne({
+        email,
+      });
+
+    return MongoDbUserSerializer.toModel(result);
+  }
+
+  public async save(user: User): Promise<void> {
+    this.logger.debug('[MongoDbUserRepository][save] saving user', user);
+    
+    // todo, gerer les updates
+    const existingUser = await this.getByEmail(user.email);
+
+    if (existingUser) {
+      await this.updateExistingUser(existingUser, user);
+    } else {
+      await this.insertNewUser(user);
+    }
+
+    return;
+  }
+
+  public async insertNewUser(user: User): Promise<void> {
+    await this
+      .collections<MongoDbEntities[CollectionNames.USERS]>(CollectionNames.USERS)
+      .insertOne({
+        _id: MUUID(user.id),
+        email: user.email,
+        sessionToken: user.sessionToken,
+      }, { forceServerObjectId: false });
+  }
+
+  public async updateExistingUser(previousUser: User, newUser: User): Promise<void> {
+    throw new Error('Not implemeted yet!');
+
+    let updateFilter: UpdateFilter<MongoDbEntities[CollectionNames.USERS]> = {};
+
+    // new fields
+    // updated fields
+    // deleted fields
+
+    await this
+      .collections<MongoDbEntities[CollectionNames.USERS]>(CollectionNames.USERS)
+      .updateOne({
+        _id: MUUID(previousUser.id)
+      }, updateFilter);
   }
 }

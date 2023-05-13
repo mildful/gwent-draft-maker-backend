@@ -6,18 +6,18 @@ import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import * as express from 'express';
 import * as DomainErrors from '../domain/shared/Errors';
-import Context from '../domain/models/Context';
-import Logger, { LogLevel } from '../domain/models/Logger';
+import Context from '../domain/models/utils/Context';
+import Logger, { LogLevel } from '../domain/models/utils/Logger';
 import { ErrorCode } from '../domain/shared/Errors';
 import { ContextMiddleware } from './middlewares/ContextMiddleware';
 import { AuthMiddleware } from './middlewares/AuthMiddleware';
 import { CorsMiddleware } from './middlewares/CorsMiddleware';
 import { LogMiddleware } from './middlewares/LogMiddleware';
+import { AbstractJwtSessionProvider } from './providers/session/AbstractJwtSessionProvider';
 
-// import '../interfaces/controllers/ApplicationController';
-// import '../interfaces/controllers/AuthenticationController';
-// import '../interfaces/controllers/PlayerController';
-import './controllers/UserController'
+import './controllers/ConfigController';
+import './controllers/UserController';
+import './controllers/AuthController';
 
 export default class Server {
   private readonly logger: Logger;
@@ -92,6 +92,9 @@ export default class Server {
 
     const contextMiddleware = new ContextMiddleware(this.context);
     app.use(contextMiddleware.initContext.bind(contextMiddleware));
+
+    const sessionProvider = this.container.getNamed<AbstractJwtSessionProvider>('Provider', 'Session');
+    app.use(sessionProvider.extract.bind(sessionProvider));
 
     // this.container.bind('LimiterMiddleware').to(LimiterMiddleware);
     // this.container.bind('KillSwitchMiddleware').to(KillSwitchMiddleware);

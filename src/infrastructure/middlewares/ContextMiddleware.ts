@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { randomUUID } from 'crypto';
-import Context from '../../domain/models/Context';
+import Context from '../../domain/models/utils/Context';
 
 export class ContextMiddleware {
   constructor(private readonly context: Context) {}

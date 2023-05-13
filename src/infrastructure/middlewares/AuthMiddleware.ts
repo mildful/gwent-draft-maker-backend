@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { inject, injectable, named } from 'inversify';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { UnauthorizedError } from '../../domain/shared/Errors';
-import Context from '../../domain/models/Context';
+import Context from '../../domain/models/utils/Context';
 import UserRepository from '../repositories/UserRepository';
 
 @injectable()

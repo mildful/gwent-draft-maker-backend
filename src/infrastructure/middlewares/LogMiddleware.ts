@@ -3,8 +3,8 @@ import { NextFunction, Request, Response } from 'express';
 import * as onFinished from 'on-finished';
 import * as onHeaders from 'on-headers';
 import { Validator } from '../../domain/shared/Validator';
-import Context from '../../domain/models/Context';
-import Logger, { Color } from '../../domain/models/Logger';
+import Context from '../../domain/models/utils/Context';
+import Logger, { Color } from '../../domain/models/utils/Logger';
 
 interface LogMiddlewareParams {
   logger: Logger;

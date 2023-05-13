@@ -5,5 +5,10 @@ export enum CollectionNames {
 };
 
 export const collectionDefinitions: MongoDbCollectionDefinition[] = [
-  { name: CollectionNames.USERS },
+  {
+    name: CollectionNames.USERS,
+    indexes: {
+      email: 1,
+    },
+  },
 ];

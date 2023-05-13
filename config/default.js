@@ -19,4 +19,18 @@ module.exports = {
       databaseName: process.env.MONGODB_DATABASE_NAME || 'wall-of-pixels',
     },
   },
+  providers: {
+    session: {
+      jwtBearer: {
+        tokenLifeTime: process.env.JWT_TOKEN_LIFETIME ? +process.env.JWT_TOKEN_LIFETIME : 3600 * 24,
+        tokenPassPhrase: process.env.JWT_TOKEN_PASSPHRASE,
+      },
+    },
+    auth: {
+      twitch: {
+        clientId: process.env.TWITCH_CLIENT_ID,
+        secret: process.env.TWITCH_CLIENT_SECRET,
+      }
+    }
+  },
 };

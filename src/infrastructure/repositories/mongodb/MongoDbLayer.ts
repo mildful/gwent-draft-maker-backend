@@ -1,9 +1,10 @@
 import { MongoClient, Db } from 'mongodb';
 
-import Logger from '../../../domain/models/Logger';
+import Logger from '../../../domain/models/utils/Logger';
 import { ServerError } from '../../../domain/shared/Errors';
 import MongoDbCollectionManager from './MongoDbCollectionManager';
 import { collectionDefinitions } from './CollectionDefinitions';
+
 // import { DynamoDbTableManager } from './DynamoDbTableManager';
 // import { DynamoDbOptions } from './Entities';
 

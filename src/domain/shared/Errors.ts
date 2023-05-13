@@ -1,4 +1,5 @@
 export enum ErrorCode {
+  USER_NOT_FOUND = 'UserNotFound',
   GENERIC_CONFLICT = 'GenericConflictError',
   GENERIC_DOMAIN = 'GenericDomainError',
   GENERIC_FORBIDDEN = 'GenericForbiddenError',

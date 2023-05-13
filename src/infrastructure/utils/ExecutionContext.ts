@@ -1,5 +1,5 @@
 import * as asyncHooks from 'async_hooks';
-import Context, { ContextData } from '../../domain/models/Context';
+import Context, { ContextData } from '../../domain/models/utils/Context';
 
 export default class ExecutionContext implements Context {
   private readonly data: { [key: number]: { [k in keyof ContextData]?: ContextData[k] } };

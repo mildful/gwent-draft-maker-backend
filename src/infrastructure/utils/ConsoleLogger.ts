@@ -1,7 +1,7 @@
 import * as dateFns from 'date-fns';
 import { Validator } from '../../domain/shared/Validator';
-import Context from '../../domain/models/Context';
-import Logger, { LogLevel, Color } from '../../domain/models/Logger';
+import Context from '../../domain/models/utils/Context';
+import Logger, { LogLevel, Color } from '../../domain/models/utils/Logger';
 
 export interface Writable {
   write: Function;
