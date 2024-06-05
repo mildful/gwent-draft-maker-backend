@@ -15,7 +15,6 @@ export class AuthMiddleware extends BaseMiddleware {
   }
 
   public async handler(req: Request, res: Response, next: NextFunction): Promise<void> {
-    // todo : SET IT SOMEWHERE
     const userId = this.context.get('userId');
     if (userId) {
       const user = await this.userRepository.getById(userId);

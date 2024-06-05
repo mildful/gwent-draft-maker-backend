@@ -7,7 +7,8 @@ export enum ErrorCode {
   GENERIC_SERVER = 'GenericServerError',
   GENERIC_UNAUTHORIZED = 'GenericUnauthorizedError',
   GENERIC_VALIDATION = 'GenericValidationError',
-  PAGE_NOT_FOUND = 'PageNotFound'
+  PAGE_NOT_FOUND = 'PageNotFound',
+  PROVIDER_NOT_FOUND = 'ProviderNotFound',
 }
 
 export class DomainError extends Error {

@@ -23,13 +23,14 @@ module.exports = {
     session: {
       jwtBearer: {
         tokenLifeTime: process.env.JWT_TOKEN_LIFETIME ? +process.env.JWT_TOKEN_LIFETIME : 3600 * 24,
-        tokenPassPhrase: process.env.JWT_TOKEN_PASSPHRASE,
+        tokenPassPhrase: process.env.JWT_TOKEN_PASSPHRASE, // openssl rand -hex 32
       },
     },
     auth: {
       twitch: {
         clientId: process.env.TWITCH_CLIENT_ID,
-        secret: process.env.TWITCH_CLIENT_SECRET,
+        secret: process.env.TWITCH_SECRET,
+        redirectUri: process.env.TWITCH_REDIRECT_URI || 'http://localhost:5173/auth/twitch/redirect',
       }
     }
   },

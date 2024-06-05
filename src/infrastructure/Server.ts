@@ -5,6 +5,7 @@ import * as http from 'http';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import * as express from 'express';
+import expressSession from 'express-session';
 import * as DomainErrors from '../domain/shared/Errors';
 import Context from '../domain/models/utils/Context';
 import Logger, { LogLevel } from '../domain/models/utils/Logger';
@@ -93,9 +94,13 @@ export default class Server {
     const contextMiddleware = new ContextMiddleware(this.context);
     app.use(contextMiddleware.initContext.bind(contextMiddleware));
 
+    app.use(expressSession({
+      secret: ''
+    }));
     const sessionProvider = this.container.getNamed<AbstractJwtSessionProvider>('Provider', 'Session');
     app.use(sessionProvider.extract.bind(sessionProvider));
 
+    // todo at some point
     // this.container.bind('LimiterMiddleware').to(LimiterMiddleware);
     // this.container.bind('KillSwitchMiddleware').to(KillSwitchMiddleware);
     this.container.bind('AuthMiddleware').to(AuthMiddleware);

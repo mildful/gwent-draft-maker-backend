@@ -57,7 +57,7 @@ export default class MongoDbLayer {
   // }
 
   // async isTableDefined(tableName: string): Promise<boolean> {
-  //   this.logger.debug(`Describing table: ${tableName}`);
+  //   this.logger.info(`Describing table: ${tableName}`);
   //   try {
   //     await this.tableManager.describeTable(tableName);
   //     return true;

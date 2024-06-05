@@ -9,7 +9,7 @@ import { UpdateFilter } from "mongodb";
 
 export default class MongoDbUserRepository extends MongoDbRepository implements UserRepository {
   public async getById(id: string): Promise<User | null> {
-    this.logger.debug('[MongoDbUserRepository][getById] Finding user by id', id);
+    this.logger.info('[MongoDbUserRepository][getById] Finding user by id', id);
 
     const result = await this
       .collections<MongoDbEntities[CollectionNames.USERS]>(CollectionNames.USERS)
@@ -21,7 +21,7 @@ export default class MongoDbUserRepository extends MongoDbRepository implements 
   }
 
   public async getByEmail(email: string): Promise<User | null> {
-    this.logger.debug('[MongoDbUserRepository][getByEmail] Finding user by mail', email);
+    this.logger.info('[MongoDbUserRepository][getByEmail] Finding user by mail', email);
 
     const result = await this
       .collections<MongoDbEntities[CollectionNames.USERS]>(CollectionNames.USERS)
@@ -32,17 +32,18 @@ export default class MongoDbUserRepository extends MongoDbRepository implements 
     return MongoDbUserSerializer.toModel(result);
   }
 
-  public async save(user: User): Promise<void> {
-    this.logger.debug('[MongoDbUserRepository][save] saving user', user);
-    
-    // todo, gerer les updates
-    const existingUser = await this.getByEmail(user.email);
+  public async save(user: User, allowUpdate = true): Promise<void> {
+    this.logger.info('[MongoDbUserRepository][save] saving user', user);
 
-    if (existingUser) {
-      await this.updateExistingUser(existingUser, user);
-    } else {
-      await this.insertNewUser(user);
+    if (allowUpdate) {
+      // todo, gerer les updates
+      const existingUser = await this.getByEmail(user.email);
+      if (existingUser) {
+        await this.updateExistingUser(existingUser, user);
+      }
     }
+
+    await this.insertNewUser(user);
 
     return;
   }
@@ -54,6 +55,7 @@ export default class MongoDbUserRepository extends MongoDbRepository implements 
         _id: MUUID(user.id),
         email: user.email,
         sessionToken: user.sessionToken,
+        authenticationData: MongoDbUserSerializer.AuthenticationDataToEntity(user.authenticationData),
       }, { forceServerObjectId: false });
   }
 

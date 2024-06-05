@@ -1,12 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import User from '../../../domain/models/User';
 import { Validator } from '../../../domain/shared/Validator';
+import { SessionToken } from '../../../domain/models/Session';
 import { AbstractJwtSessionProvider } from './AbstractJwtSessionProvider';
-
-export interface SessionToken {
-  token: string;
-  expiresIn: number;
-}
 
 export class JwtBearerSessionProvider extends AbstractJwtSessionProvider {
   public async extract(req: Request, res: Response, next: NextFunction): Promise<void> {

@@ -1,16 +1,19 @@
 import { Validator } from "../shared/Validator";
+import { AuthenticationData, CreateAuthenticationDataParams } from "./AuthenticationData";
 import { Id } from "./utils/Id";
 
 export interface CreateUserParams {
   id?: string;
   email: string;
-  sessionToken?: string;
+  // sessionToken?: string;
+  authenticationData: CreateAuthenticationDataParams;
 }
 
 interface UserState {
   id: Id,
   email: string;
-  sessionToken: string,
+  // sessionToken: string,
+  authenticationData: AuthenticationData,
 }
 
 export default class User {
@@ -24,10 +27,12 @@ export default class User {
     this._state.email = value;
   }
 
-  public get sessionToken(): string { return this._state.sessionToken; }
-  public set sessionToken(value: string) {
-    this._state.sessionToken = value ? value.trim() : null;
-  }
+  // public get sessionToken(): string { return this._state.sessionToken; }
+  // public set sessionToken(value: string) {
+  //   this._state.sessionToken = value ? value.trim() : null;
+  // }
+
+  public get authenticationData(): AuthenticationData { return this._state.authenticationData; }
 
   constructor(params: CreateUserParams) {
     Validator.validate(params, Validator.isObject, '[User][constructor] params must be an object');
@@ -39,11 +44,12 @@ export default class User {
     this._state = {
       id: params.id || Id.create(),
       email: null,
-      sessionToken: null,
+      // sessionToken: null,
+      authenticationData: new AuthenticationData(params.authenticationData),
     };
 
     this.email = params.email;
-    this.sessionToken = params.sessionToken;
+    // this.sessionToken = params.sessionToken;
   }
 
   public static isValid(data: unknown): data is User {

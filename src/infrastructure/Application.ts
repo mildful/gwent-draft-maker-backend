@@ -8,16 +8,21 @@ import ConsoleLogger from './utils/ConsoleLogger';
 import Context from '../domain/models/utils/Context';
 import ExecutionContext from './utils/ExecutionContext';
 import Clock from '../domain/models/utils/Clock';
-import { AuthConfig } from '../domain/models/utils/Config';
 import SystemClock from './utils/SystemClock';
+import HttpClient from '../domain/models/utils/HttpClient';
+import AxiosHttpClient from './utils/AxiosHttpClient';
 
+import { AuthConfig } from '../domain/models/utils/Config';
 import UserService from '../application/services/UserService';
+import { AuthService } from '../application/services/AuthService';
 import Server from './Server';
 import UserRepository from './repositories/UserRepository';
 import MongoDbLayer from './repositories/mongodb/MongoDbLayer';
 import MongoDbUserRepository from './repositories/mongodb/implementations/MongoDbUserRepository';
 import { AbstractJwtSessionProvider } from './providers/session/AbstractJwtSessionProvider';
 import { JwtBearerSessionProvider } from './providers/session/JwtBearerSessionProvider';
+import { AuthProviderFactory } from '../domain/models/AuthProviderFactory';
+import { BasicAuthProviderFactory } from './providers/auth/BasicAuthProviderFactory';
 
 export class Application {
   private server: Server;
@@ -72,12 +77,15 @@ export class Application {
     this.container.bind<Context>('Context').toConstantValue(this.context);
     this.container.bind<Logger>('Logger').toConstantValue(this.logger);
     this.container.bind<Clock>('Clock').toConstantValue(new SystemClock());
+    this.container.bind<HttpClient>('Http').toConstantValue(new AxiosHttpClient());
+
     this.container.bind<string>('Server').toConstantValue(config.get('server.environment'))
       .whenTargetNamed('Environment');
     this.container.bind<boolean>('Server').toConstantValue(config.get('server.enabled'))
       .whenTargetNamed('Enabled');
     this.container.bind<string>('Server').toConstantValue(config.get('server.version'))
       .whenTargetNamed('Version');
+
     this.container.bind<AuthConfig>('Config').toConstantValue(config.get('providers.auth'))
       .whenTargetNamed('Auth');
   }
@@ -94,12 +102,22 @@ export class Application {
 
   private bindServices(): void {
     this.container.bind<UserService>('Service').to(UserService).whenTargetNamed('User');
+    this.container.bind<AuthService>('Service').to(AuthService).whenTargetNamed('Auth');
   }
 
   private bindProviders(): void {
+    // session
     this.container.bind<AbstractJwtSessionProvider>('Provider').toConstantValue(
       new JwtBearerSessionProvider(this.context, this.logger, config.get('providers.session.jwtBearer')),
     ).whenTargetNamed('Session');
+    // auth
+    this.container.bind<AuthProviderFactory>('Factory').toConstantValue(
+      new BasicAuthProviderFactory(
+        this.container.getNamed('Config', 'Auth'),
+        this.container.get('Http'),
+        this.container.get('Clock'),
+      )
+    ).whenTargetNamed('AuthProvider');
   }
 
   private loadEnvVars(): void {

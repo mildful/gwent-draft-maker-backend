@@ -12,17 +12,17 @@ export class UserController {
     @inject('Logger') private readonly logger: Logger,
   ) { /* Do nothing */ }
 
-  @httpPost('')
-  public async createUser(@requestBody() body: { email: string }): Promise<UserDto> {
-    const newUser = await this.userService.createUser({
-      email: body.email,
-    });
-    return UserSerializer.toDto(newUser);
-  }
+  // @httpPost('')
+  // public async createUser(@requestBody() body: { email: string }): Promise<UserDto> {
+  //   const newUser = await this.userService.createUser({
+  //     email: body.email,
+  //   });
+  //   return UserSerializer.toDto(newUser);
+  // }
 
-  @httpGet('')
-  public async getUser(@queryParam('email') email: string): Promise<UserDto> {
-    const newUser = await this.userService.testGetUser(email);
-    return UserSerializer.toDto(newUser);
-  }
+  // @httpGet('')
+  // public async getUser(@queryParam('email') email: string): Promise<UserDto> {
+  //   const newUser = await this.userService.testGetUser(email);
+  //   return UserSerializer.toDto(newUser);
+  // }
 }

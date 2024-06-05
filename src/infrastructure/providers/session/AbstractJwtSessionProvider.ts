@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
+import { SessionToken } from '../../../domain/models/Session';
 import { Validator } from '../../../domain/shared/Validator';
 import Context from '../../../domain/models/utils/Context';
 import Logger from '../../../domain/models/utils/Logger';
+import User from '../../../domain/models/User';
 
 export interface JwtSessionParams {
   headerName: string;
@@ -60,4 +62,6 @@ export abstract class AbstractJwtSessionProvider {
   }
 
   public abstract extract(req: Request, res: Response, next: NextFunction): Promise<void>;
+
+  public abstract generateToken(user: User): Promise<SessionToken>;
 }

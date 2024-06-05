@@ -1,4 +1,4 @@
-import User from "./User";
+import User from "../User";
 import { Id } from "./Id";
 
 export interface ContextData {
@@ -6,7 +6,6 @@ export interface ContextData {
   userId?: Id;
   user?: User;
   sessionToken?: string;
-  // recaptchaToken?: string;
   routePath?: string;
   method?: string;
 }
