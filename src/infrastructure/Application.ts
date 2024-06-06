@@ -2,6 +2,7 @@ import * as config from 'config';
 import * as http from 'http';
 import axios from 'axios';
 import { BindingScopeEnum, Container } from 'inversify';
+import * as firebaseAdmin from 'firebase-admin/app';
 
 import Logger from '../domain/models/utils/Logger';
 import ConsoleLogger from './utils/ConsoleLogger';
@@ -12,18 +13,14 @@ import SystemClock from './utils/SystemClock';
 import HttpClient from '../domain/models/utils/HttpClient';
 import AxiosHttpClient from './utils/AxiosHttpClient';
 
-import { AuthService } from '../application/services/AuthService';
 import Server from './Server';
 import UserRepository from './repositories/UserRepository';
-import MongoDbLayer from './repositories/mongodb/MongoDbLayer';
-import MongoDbUserRepository from './repositories/mongodb/implementations/MongoDbUserRepository';
-import AuthStrategy from './providers/auth/AuthStrategy';
-import LocalAuthStrategy from './providers/auth/LocalAuthStrategy';
 import BcryptHash from './utils/BcryptHash';
 import Hash from '../domain/models/utils/Hash';
 import AuthProvider from './providers/auth/AuthProvider';
 import InMemoryUserRepository from './repositories/inMemory/InMemoryUserRepository';
 import { ApplicationConfig } from '../domain/models/ApplicationConfig';
+import FirebaseAuthProvider from './providers/auth/FirebaseAuthProvider';
 
 export class Application {
   private server: Server;
@@ -81,7 +78,7 @@ export class Application {
     this.container.bind<HttpClient>('Http').toConstantValue(new AxiosHttpClient());
     this.container.bind<Hash>('Hash').toConstantValue(new BcryptHash());
     this.container.bind<ApplicationConfig>('AppConfig').toConstantValue({
-      environment: 'local',
+      environment: 'local', // TODO: dynamic
     });
   }
 
@@ -97,13 +94,17 @@ export class Application {
   }
 
   private bindServices(): void {
-    this.container.bind<AuthService>('Service').to(AuthService).whenTargetNamed('Auth');
+
   }
 
   private bindProviders(): void {
-    // auth
-    this.container.bind<AuthProvider>('AuthProvider').to(AuthProvider);
-    this.container.bind<AuthStrategy>('AuthStrategy').to(LocalAuthStrategy).whenTargetNamed('Local');
+    // firebase
+    // TODO: conditional if firebase is activated
+    firebaseAdmin.initializeApp({
+      credential: firebaseAdmin.applicationDefault(),
+      projectId: config.get<string>('firebase.projectId'),
+    });
+    this.container.bind<AuthProvider>('Provider').to(FirebaseAuthProvider).whenTargetNamed('Auth');
   }
 
   private loadEnvVars(): void {

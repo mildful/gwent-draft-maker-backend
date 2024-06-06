@@ -1,3 +1,5 @@
+// This is just an example model.
+
 import { Validator } from "../shared/Validator";
 import { Id } from "./utils/Id";
 

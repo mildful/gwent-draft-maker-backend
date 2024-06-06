@@ -5,8 +5,6 @@ import * as http from 'http';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import * as express from 'express';
-import session = require('express-session');
-import passport = require('passport');
 import * as DomainErrors from '../domain/shared/Errors';
 import Context from '../domain/models/utils/Context';
 import Logger, { LogLevel } from '../domain/models/utils/Logger';
@@ -17,7 +15,6 @@ import { CorsMiddleware } from './middlewares/CorsMiddleware';
 import { LogMiddleware } from './middlewares/LogMiddleware';
 
 import './controllers/ConfigController';
-import './controllers/AuthController';
 
 export default class Server {
   private readonly logger: Logger;
@@ -97,17 +94,6 @@ export default class Server {
 
     const contextMiddleware = new ContextMiddleware(this.context);
     app.use(contextMiddleware.initContext.bind(contextMiddleware));
-
-    // auth
-    app.use(session({
-      secret: 'keyboard', // TODO: app config
-      resave: false,
-      saveUninitialized: false,
-      cookie: { secure: true }
-    }));
-    app.use(passport.initialize());
-    app.use(passport.session());
-    this.container.bind<passport.PassportStatic>('Passport').toConstantValue(passport);
 
     const logMiddleware = new LogMiddleware(this.context, {
       logger: this.logger,

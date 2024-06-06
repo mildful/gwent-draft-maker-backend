@@ -7,6 +7,9 @@ module.exports = {
     environment: process.env.ENVIRONMENT || 'local',
     version: process.env.APPLICATION_VERSION,
   },
+  firebase: {
+    projectId: 'boilerplate-playground',
+  },
   logger: {
     enabled: process.env.LOGGER_ENABLED !== 'false',
     level: process.env.LOGGER_LEVEL ? +process.env.LOGGER_LEVEL : 2,

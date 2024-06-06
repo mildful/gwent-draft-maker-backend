@@ -1,3 +1,3 @@
 export interface ApplicationConfig {
-  environment: 'local' | 'live',
+  environment: 'local' | 'live', // TODO:
 }

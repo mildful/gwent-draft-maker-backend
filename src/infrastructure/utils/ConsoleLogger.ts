@@ -70,7 +70,7 @@ export default class ConsoleLogger implements Logger {
         level: LogLevel[level].toLocaleLowerCase(),
         routePath: this.context.get('routePath'),
         method: this.context.get('method'),
-        playerId: this.context.get('user')?.id,
+        playerId: this.context.get('userId'),
         message,
         data,
       };

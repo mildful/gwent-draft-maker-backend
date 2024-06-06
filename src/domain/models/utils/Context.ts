@@ -2,7 +2,7 @@ import User from "../User";
 
 export interface ContextData {
   traceId?: string;
-  user?: User;
+  userId?: string;
   routePath?: string;
   method?: string;
 }

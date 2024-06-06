@@ -114,3 +114,5 @@ build/
 
 # Local configuration file
 config/local-development.js
+
+secrets/
