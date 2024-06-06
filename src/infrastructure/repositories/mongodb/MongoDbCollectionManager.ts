@@ -29,14 +29,8 @@ export default class MongoDbCollectionManager {
 
     return Promise.all(
       this.collectionDefinitions
-        .map((definition) => {
-          if (existingCollectionNames.includes(definition.name)) {
-            this.logger.info(`[MongoDbCollectionManager][initialize] Collection "${definition.name}" already exists. Skipping.`);
-            return null;
-          }
-          
-          return this.createCollection(definition);
-        }).filter((promise) => promise !== null)
+        .filter((definition) => existingCollectionNames.includes(definition.name))
+        .map((definition) => this.createCollection(definition)),
     );
   }
 
@@ -44,9 +38,11 @@ export default class MongoDbCollectionManager {
     const indexDescritpions: IndexDescription[] = [];
 
     for (let indexKey in definition.indexes) {
-      indexDescritpions.push({ key: {
-        [indexKey]: definition.indexes[indexKey],
-      }});
+      indexDescritpions.push({
+        key: {
+          [indexKey]: definition.indexes[indexKey],
+        }
+      });
     }
 
     const collection = await this.database.createCollection(definition.name);

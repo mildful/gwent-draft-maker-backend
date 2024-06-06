@@ -12,17 +12,18 @@ import SystemClock from './utils/SystemClock';
 import HttpClient from '../domain/models/utils/HttpClient';
 import AxiosHttpClient from './utils/AxiosHttpClient';
 
-import { AuthConfig } from '../domain/models/utils/Config';
-import UserService from '../application/services/UserService';
 import { AuthService } from '../application/services/AuthService';
 import Server from './Server';
 import UserRepository from './repositories/UserRepository';
 import MongoDbLayer from './repositories/mongodb/MongoDbLayer';
 import MongoDbUserRepository from './repositories/mongodb/implementations/MongoDbUserRepository';
-import { AbstractJwtSessionProvider } from './providers/session/AbstractJwtSessionProvider';
-import { JwtBearerSessionProvider } from './providers/session/JwtBearerSessionProvider';
-import { AuthProviderFactory } from '../domain/models/AuthProviderFactory';
-import { BasicAuthProviderFactory } from './providers/auth/BasicAuthProviderFactory';
+import AuthStrategy from './providers/auth/AuthStrategy';
+import LocalAuthStrategy from './providers/auth/LocalAuthStrategy';
+import BcryptHash from './utils/BcryptHash';
+import Hash from '../domain/models/utils/Hash';
+import AuthProvider from './providers/auth/AuthProvider';
+import InMemoryUserRepository from './repositories/inMemory/InMemoryUserRepository';
+import { ApplicationConfig } from '../domain/models/ApplicationConfig';
 
 export class Application {
   private server: Server;
@@ -38,7 +39,7 @@ export class Application {
     this.context = new ExecutionContext();
     this.logger = new ConsoleLogger({
       context: this.context,
-      applicationId: process.env.npm_package_name,
+      applicationId: process.env.npm_package_name ?? 'undefined',
       level: config.get<number>('logger.level'),
       pretty: process.env.NODE_ENV === 'development',
       enabled: config.get<boolean>('logger.enabled'),
@@ -78,49 +79,35 @@ export class Application {
     this.container.bind<Logger>('Logger').toConstantValue(this.logger);
     this.container.bind<Clock>('Clock').toConstantValue(new SystemClock());
     this.container.bind<HttpClient>('Http').toConstantValue(new AxiosHttpClient());
-
-    this.container.bind<string>('Server').toConstantValue(config.get('server.environment'))
-      .whenTargetNamed('Environment');
-    this.container.bind<boolean>('Server').toConstantValue(config.get('server.enabled'))
-      .whenTargetNamed('Enabled');
-    this.container.bind<string>('Server').toConstantValue(config.get('server.version'))
-      .whenTargetNamed('Version');
-
-    this.container.bind<AuthConfig>('Config').toConstantValue(config.get('providers.auth'))
-      .whenTargetNamed('Auth');
+    this.container.bind<Hash>('Hash').toConstantValue(new BcryptHash());
+    this.container.bind<ApplicationConfig>('AppConfig').toConstantValue({
+      environment: 'local',
+    });
   }
 
   private async bindRepositories(): Promise<void> {
-    const mongodbLayer = new MongoDbLayer({
-      ...config.get('database.mongodb'),
-    }, this.logger);
-    await mongodbLayer.initialize();
-    this.container.bind<MongoDbLayer>('MongoDbLayer').toConstantValue(mongodbLayer);
+    // TODO: config to switch
+    // const mongodbLayer = new MongoDbLayer({
+    //   ...config.get('database.mongodb'),
+    // }, this.logger);
+    // await mongodbLayer.initialize();
+    // this.container.bind<MongoDbLayer>('MongoDbLayer').toConstantValue(mongodbLayer);
 
-    this.container.bind<UserRepository>('Repository').to(MongoDbUserRepository).whenTargetNamed('User');
+    this.container.bind<UserRepository>('Repository').to(InMemoryUserRepository).whenTargetNamed('User');
   }
 
   private bindServices(): void {
-    this.container.bind<UserService>('Service').to(UserService).whenTargetNamed('User');
     this.container.bind<AuthService>('Service').to(AuthService).whenTargetNamed('Auth');
   }
 
   private bindProviders(): void {
-    // session
-    this.container.bind<AbstractJwtSessionProvider>('Provider').toConstantValue(
-      new JwtBearerSessionProvider(this.context, this.logger, config.get('providers.session.jwtBearer')),
-    ).whenTargetNamed('Session');
     // auth
-    this.container.bind<AuthProviderFactory>('Factory').toConstantValue(
-      new BasicAuthProviderFactory(
-        this.container.getNamed('Config', 'Auth'),
-        this.container.get('Http'),
-        this.container.get('Clock'),
-      )
-    ).whenTargetNamed('AuthProvider');
+    this.container.bind<AuthProvider>('AuthProvider').to(AuthProvider);
+    this.container.bind<AuthStrategy>('AuthStrategy').to(LocalAuthStrategy).whenTargetNamed('Local');
   }
 
   private loadEnvVars(): void {
+    // TODO:
     // if (!process.env.npm_package_name || !process.env.npm_package_version) {
     //   // eslint-disable-next-line
     //   const p = require(path.join(__dirname, '..', '..', 'package.json'));

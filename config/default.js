@@ -1,6 +1,5 @@
 module.exports = {
   server: {
-    enabled: process.env.SERVER_ENABLED !== 'false',
     port: process.env.SERVER_PORT ? +process.env.SERVER_PORT : 8080,
     cors: {
       origins: (process.env.SERVER_CORS_ORIGINS || '').split(',').map((v) => { return v.trim(); }).filter((v, i, s) => { return v !== '' && s.indexOf(v) === i; }),

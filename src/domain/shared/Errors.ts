@@ -8,6 +8,7 @@ export enum ErrorCode {
   GENERIC_UNAUTHORIZED = 'GenericUnauthorizedError',
   GENERIC_VALIDATION = 'GenericValidationError',
   PAGE_NOT_FOUND = 'PageNotFound',
+  PASSWORD_TOO_WEAK = 'PasswordTooWeak',
   PROVIDER_NOT_FOUND = 'ProviderNotFound',
 }
 

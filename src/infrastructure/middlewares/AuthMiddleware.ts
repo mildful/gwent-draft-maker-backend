@@ -3,26 +3,26 @@ import { inject, injectable, named } from 'inversify';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { UnauthorizedError } from '../../domain/shared/Errors';
 import Context from '../../domain/models/utils/Context';
-import UserRepository from '../repositories/UserRepository';
+import AuthStrategy from '../providers/auth/AuthStrategy';
+import passport = require('passport');
+import User from '../../domain/models/User';
 
 @injectable()
 export class AuthMiddleware extends BaseMiddleware {
   constructor(
     @inject('Context') private context: Context,
-    @inject('Repository') @named('User') private readonly userRepository: UserRepository,
+    @inject('Passport') private readonly passport: passport.PassportStatic,
+    @inject('AuthStrategy') @named('Local') private readonly localStrategy: AuthStrategy,
   ) {
     super();
   }
 
   public async handler(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const userId = this.context.get('userId');
-    if (userId) {
-      const user = await this.userRepository.getById(userId);
-      if (user && user.sessionToken === this.context.get('sessionToken')) {
-        this.context.set('user', user);
-        return next();
-      }
+    if (req.isAuthenticated()) {
+      this.context.set('user', req.user as User);
+      next();
+    } else {
+      next(new UnauthorizedError('Authentication required'));
     }
-    return next(new UnauthorizedError('Authentication required'));
   }
 }

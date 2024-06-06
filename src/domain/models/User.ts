@@ -1,19 +1,16 @@
 import { Validator } from "../shared/Validator";
-import { AuthenticationData, CreateAuthenticationDataParams } from "./AuthenticationData";
 import { Id } from "./utils/Id";
 
 export interface CreateUserParams {
   id?: string;
   email: string;
-  // sessionToken?: string;
-  authenticationData: CreateAuthenticationDataParams;
+  password: string;
 }
 
 interface UserState {
   id: Id,
   email: string;
-  // sessionToken: string,
-  authenticationData: AuthenticationData,
+  password: string;
 }
 
 export default class User {
@@ -27,29 +24,29 @@ export default class User {
     this._state.email = value;
   }
 
-  // public get sessionToken(): string { return this._state.sessionToken; }
-  // public set sessionToken(value: string) {
-  //   this._state.sessionToken = value ? value.trim() : null;
-  // }
-
-  public get authenticationData(): AuthenticationData { return this._state.authenticationData; }
+  public set password(value: string) {
+    Validator.validate(value, Validator.isString, `[User][Constructor] Password must be a string: ${value}`);
+  }
 
   constructor(params: CreateUserParams) {
     Validator.validate(params, Validator.isObject, '[User][constructor] params must be an object');
-    
+
     if (params.id) {
       Validator.validate(Id.isValid(params.id), `[User][constructor] Invalid id: ${params.id}`);
     }
 
     this._state = {
       id: params.id || Id.create(),
-      email: null,
-      // sessionToken: null,
-      authenticationData: new AuthenticationData(params.authenticationData),
+      email: '',
+      password: '',
     };
 
     this.email = params.email;
-    // this.sessionToken = params.sessionToken;
+    this.password = params.password;
+  }
+
+  public static validatePassword(password: string): boolean {
+    return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password);
   }
 
   public static isValid(data: unknown): data is User {

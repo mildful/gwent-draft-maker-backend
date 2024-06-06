@@ -3,29 +3,50 @@ import {
   controller,
   requestParam,
   httpPost,
+  request,
   requestBody,
+  next,
 } from "inversify-express-utils";
 import { AuthService } from '../../application/services/AuthService';
-import { SessionTokenDto } from './dto/SessionTokenDto';
-import { SessionSerializer } from './serializers/SessionSerializer';
-import { ServerError } from "../../domain/shared/Errors";
+import UserSerializer from "./serializers/UserSerializer";
+import { UserDto } from "./dto/UserDto";
+import { Validator } from "../../domain/shared/Validator";
+import { ValidationError } from "../../domain/shared/Errors";
+import AuthProvider from "../providers/auth/AuthProvider";
+import { NextFunction } from "express";
 
 @controller('/auth')
 export class AuthController {
   constructor(
     @inject('Service') @named('Auth') private readonly authService: AuthService,
+    @inject('AuthProvider') private readonly authProvider: AuthProvider,
   ) { }
 
-  @httpPost('/:provider(twitch)')
-  public async authenticateWithProvider(
-    @requestParam('provider') providerName: string,
-    @requestBody() parameters: { code: string },
-  ): Promise<SessionTokenDto> {
-    if (providerName === 'twitch') {
-      const token = await this.authService.loginOrRegisterWithTwitch(parameters.code);
-      return SessionSerializer.toDto(token);
-    } else {
-      throw new ServerError('Something went wrong.');
+  @httpPost('/signup')
+  public async signup(
+    @requestBody() body: any,
+  ): Promise<UserDto> {
+    const { email, password } = body;
+
+    try {
+      Validator.validate(email, Validator.isNonEmptyString, 'You must provide an email');
+      Validator.validate(password, Validator.isNonEmptyString, 'You must provide a password');
+    } catch (err) {
+      throw new ValidationError(err);
     }
+
+    const user = await this.authService.signup({ email, password });
+
+    return UserSerializer.toDto(user);
+  }
+
+  @httpPost('/:provider(local)')
+  public async login(
+    @requestParam('provider') providerName: string,
+    @request() req: Express.Request,
+    @next() next: NextFunction,
+  ): Promise<UserDto> {
+    const user = await this.authService.login(providerName, req, next);
+    return UserSerializer.toDto(user);
   }
 }

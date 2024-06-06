@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as querystring  from "querystring";
+import * as querystring from "querystring";
 import HttpClient, { RequestOptions } from "../../domain/models/utils/HttpClient";
 
 export default class AxiosHttpClient implements HttpClient {
@@ -19,7 +19,7 @@ export default class AxiosHttpClient implements HttpClient {
     }
 
     const res = await axios.post<T>(url, stringifiedData, {
-      headers: options.headers,
+      headers: options?.headers,
     });
     return res.data;
   }

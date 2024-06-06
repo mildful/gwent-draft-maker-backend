@@ -54,24 +54,12 @@ export default class MongoDbUserRepository extends MongoDbRepository implements 
       .insertOne({
         _id: MUUID(user.id),
         email: user.email,
-        sessionToken: user.sessionToken,
-        authenticationData: MongoDbUserSerializer.AuthenticationDataToEntity(user.authenticationData),
+        password: user.password,
       }, { forceServerObjectId: false });
   }
 
   public async updateExistingUser(previousUser: User, newUser: User): Promise<void> {
     throw new Error('Not implemeted yet!');
 
-    let updateFilter: UpdateFilter<MongoDbEntities[CollectionNames.USERS]> = {};
-
-    // new fields
-    // updated fields
-    // deleted fields
-
-    await this
-      .collections<MongoDbEntities[CollectionNames.USERS]>(CollectionNames.USERS)
-      .updateOne({
-        _id: MUUID(previousUser.id)
-      }, updateFilter);
   }
 }

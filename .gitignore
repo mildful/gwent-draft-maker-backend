@@ -107,6 +107,7 @@ dist
 # IDE files
 .idea
 .vscode
+*.code-workspace
 
 # Build files
 build/

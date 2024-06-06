@@ -1,11 +1,8 @@
 import User from "../User";
-import { Id } from "./Id";
 
 export interface ContextData {
   traceId?: string;
-  userId?: Id;
   user?: User;
-  sessionToken?: string;
   routePath?: string;
   method?: string;
 }

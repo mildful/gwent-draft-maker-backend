@@ -1,17 +1,17 @@
 import { inject, named } from "inversify";
 import { controller, httpGet } from "inversify-express-utils";
-import { AuthConfig } from "../../domain/models/utils/Config";
+import { ApplicationConfig } from "../../domain/models/ApplicationConfig";
 import { ConfigSerializer } from "./serializers/ConfigSerializer";
-import { ConfigDto } from "./dto/ConfigDto";
+import { ApplicationConfigDto } from "./dto/ApplicationConfigDto";
 
 @controller('/config')
 export class ConfigController {
   constructor(
-    @inject('Config') @named('Auth') private readonly authConfig: AuthConfig,
+    @inject('AppConfig') private readonly appConfig: ApplicationConfig,
   ) { }
 
   @httpGet('')
-  public getConfig(): ConfigDto {
-    return ConfigSerializer.toDto(this.authConfig);
+  public getConfig(): ApplicationConfigDto {
+    return ConfigSerializer.toDto(this.appConfig);
   }
 }

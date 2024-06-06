@@ -5,7 +5,8 @@ import * as http from 'http';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import * as express from 'express';
-import expressSession from 'express-session';
+import session = require('express-session');
+import passport = require('passport');
 import * as DomainErrors from '../domain/shared/Errors';
 import Context from '../domain/models/utils/Context';
 import Logger, { LogLevel } from '../domain/models/utils/Logger';
@@ -14,10 +15,8 @@ import { ContextMiddleware } from './middlewares/ContextMiddleware';
 import { AuthMiddleware } from './middlewares/AuthMiddleware';
 import { CorsMiddleware } from './middlewares/CorsMiddleware';
 import { LogMiddleware } from './middlewares/LogMiddleware';
-import { AbstractJwtSessionProvider } from './providers/session/AbstractJwtSessionProvider';
 
 import './controllers/ConfigController';
-import './controllers/UserController';
 import './controllers/AuthController';
 
 export default class Server {
@@ -83,6 +82,11 @@ export default class Server {
   }
 
   private loadMiddlewares(app: Application): void {
+    // TODO: at some point
+    // this.container.bind('LimiterMiddleware').to(LimiterMiddleware);
+    // this.container.bind('KillSwitchMiddleware').to(KillSwitchMiddleware);
+    this.container.bind('AuthMiddleware').to(AuthMiddleware);
+
     const corsMiddleware = new CorsMiddleware(this.corsOrigins);
     app.use(corsMiddleware.addCorsHeaders.bind(corsMiddleware));
 
@@ -94,16 +98,16 @@ export default class Server {
     const contextMiddleware = new ContextMiddleware(this.context);
     app.use(contextMiddleware.initContext.bind(contextMiddleware));
 
-    app.use(expressSession({
-      secret: ''
+    // auth
+    app.use(session({
+      secret: 'keyboard', // TODO: app config
+      resave: false,
+      saveUninitialized: false,
+      cookie: { secure: true }
     }));
-    const sessionProvider = this.container.getNamed<AbstractJwtSessionProvider>('Provider', 'Session');
-    app.use(sessionProvider.extract.bind(sessionProvider));
-
-    // todo at some point
-    // this.container.bind('LimiterMiddleware').to(LimiterMiddleware);
-    // this.container.bind('KillSwitchMiddleware').to(KillSwitchMiddleware);
-    this.container.bind('AuthMiddleware').to(AuthMiddleware);
+    app.use(passport.initialize());
+    app.use(passport.session());
+    this.container.bind<passport.PassportStatic>('Passport').toConstantValue(passport);
 
     const logMiddleware = new LogMiddleware(this.context, {
       logger: this.logger,
@@ -132,9 +136,7 @@ export default class Server {
     return code;
   }
 
-  /* eslint-disable complexity */
   private handleError(app: Application): void {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
       const code = this.handleHttpCodeFromError(err);
 

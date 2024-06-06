@@ -1,14 +1,10 @@
-import { AuthConfig } from "../../../domain/models/utils/Config";
-import { ConfigDto } from "../dto/ConfigDto";
+import { ApplicationConfig } from "../../../domain/models/ApplicationConfig";
+import { ApplicationConfigDto } from "../dto/ApplicationConfigDto";
 
 export abstract class ConfigSerializer {
-  public static toDto(authConfig: AuthConfig): ConfigDto {
+  public static toDto(authConfig: ApplicationConfig): ApplicationConfigDto {
     return {
-      auth: {
-        twitch: {
-          clientId: authConfig.twitch.clientId,
-        },
-      },
+      // TODO: something here
     };
   }
 }
