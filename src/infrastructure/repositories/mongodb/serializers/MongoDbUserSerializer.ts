@@ -1,4 +1,4 @@
-import User from '../../../../domain/models/User';
+import User from '../../../../domain/models/Card';
 import { MongoDbUserEntity } from '../entities/MongoDbUserEntity';
 
 export abstract class MongoDbUserSerializer {

@@ -1,11 +1,11 @@
 {
-  "name": "clean-backend-boilerplate",
+  "name": "gwent-draft-maker-backend",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "start-dependency": "docker-compose -f docker-compose.yml --project-name wall-of-pixels -f docker-compose.yml up -d",
-    "rm-dependency": "docker-compose -f docker-compose.yml --project-name wall-of-pixels -f docker-compose.yml down --remove-orphans",
+    "start-dependency": "docker compose -f docker-compose.yml --project-name gwent-draft-maker-backend -f docker-compose.yml up -d",
+    "rm-dependency": "docker compose -f docker-compose.yml --project-name gwent-draft-maker-backend -f docker-compose.yml down --remove-orphans",
     "build": "rimraf build && tsc -p tsconfig.build.json",
     "start": "cross-env NODE_ENV=development nodemon -L --watch src -e ts --exec 'ts-node --files --project tsconfig.json src/index.ts'",
     "test": "cross-env jest --maxWorkers=1"
@@ -44,6 +44,7 @@
     "@types/helmet": "^4.0.0",
     "@types/jest": "^29.5.1",
     "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "^20.14.2",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
     "@typescript-eslint/parser": "^7.12.0",
     "cross-env": "^7.0.3",

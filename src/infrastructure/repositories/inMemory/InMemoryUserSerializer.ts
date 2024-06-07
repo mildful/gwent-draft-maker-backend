@@ -1,4 +1,4 @@
-import User from "../../../domain/models/User";
+import User from "../../../domain/models/Card";
 import { UserEntity } from "./InMemoryUserEntity";
 
 export default abstract class InMemoryUserSerializer {

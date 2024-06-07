@@ -1,4 +1,4 @@
-FROM node:16-alpine as base
+FROM node:20-alpine as base
 WORKDIR /code
 EXPOSE 8080
 COPY package.json /code/

@@ -1,5 +1,5 @@
 import { from as MUUID } from "uuid-mongodb";
-import User from "../../../../domain/models/User";
+import User from "../../../../domain/models/Card";
 import UserRepository from "../../UserRepository";
 import MongoDbRepository from "../MongoDbRepository";
 import { CollectionNames } from "../CollectionDefinitions";

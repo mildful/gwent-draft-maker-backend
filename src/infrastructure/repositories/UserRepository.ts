@@ -1,4 +1,4 @@
-import User from "../../domain/models/User";
+import User from "../../domain/models/Card";
 
 export default interface UserRepository {
   getById(id: string): Promise<User | null>;

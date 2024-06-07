@@ -1,28 +1,29 @@
-version: '3.4'
-
 services:
-  mongodb:
-    image: mongo
+  db:
+    image: postgres
     restart: always
+    shm_size: 128mb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      POSTGRES_PASSWORD: myPassword # TODO: in secrets
+      POSTGRES_DB: gwent-draft-maker
     ports:
-      - '27017:27017'
-    networks:
-      - my-network
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
-  mongo-express:
-    image: mongo-express
+  adminer:
+    image: adminer
     restart: always
     ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
-    networks:
-      - my-network
+      - 8080:8080
 
-networks:
-  my-network:
+  php:
+    build:
+      context: .
+      dockerfile: ./scripts/Dockerfile-populate-db
+    container_name: php
+    depends_on:
+      - db
+
+volumes:
+  db_data:

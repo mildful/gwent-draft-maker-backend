@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import User from "../../../domain/models/User";
+import User from "../../../domain/models/Card";
 import Logger from "../../../domain/models/utils/Logger";
 import UserRepository from "../UserRepository";
 import { UserEntity } from "./InMemoryUserEntity";

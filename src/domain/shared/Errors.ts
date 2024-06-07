@@ -1,4 +1,6 @@
 export enum ErrorCode {
+  CANNOT_ADD_DECK_TO_DRAFT = 'CannotAddDeckToDraft',
+  DECK_INVALID_CARD = 'DeckInvalidCard',
   USER_NOT_FOUND = 'UserNotFound',
   GENERIC_CONFLICT = 'GenericConflictError',
   GENERIC_DOMAIN = 'GenericDomainError',

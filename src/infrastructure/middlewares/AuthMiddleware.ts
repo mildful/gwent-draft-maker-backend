@@ -3,7 +3,7 @@ import { inject, injectable, named } from 'inversify';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { UnauthorizedError } from '../../domain/shared/Errors';
 import Context from '../../domain/models/utils/Context';
-import User from '../../domain/models/User';
+import User from '../../domain/models/Card';
 import AuthProvider from '../providers/auth/AuthProvider';
 
 @injectable()
