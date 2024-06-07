@@ -13,10 +13,12 @@ export interface DraftCreateParams {
   decks?: Deck[];
   remainingKegs?: number;
   id?: string;
+  name?: string;
 }
 
 interface DraftState {
   id: Id;
+  name: string;
   userId: string;
   initialNumberOfKegs: number;
   remainingKegs: number;
@@ -30,6 +32,7 @@ export default class Draft {
   private _state: DraftState;
 
   public get id(): Id { return this._state.id; }
+  public get name(): string { return this._state.name; }
   public get userId(): string { return this._state.userId; }
   public get initialNumberOfKegs(): number { return this._state.initialNumberOfKegs; }
   public get remainingKegs(): number { return this._state.remainingKegs; }
@@ -57,9 +60,14 @@ export default class Draft {
     if (params.inventory) {
       Validator.validate(params.inventory, Validator.isArray, `[Draft][constructor] params.inventory must be an array: ${params.inventory}`);
     }
+    if (params.name) {
+      Validator.validate(params.name, Validator.isNonEmptyString, `[Draft][constructor] params.name must be a non-empty string: ${params.name}`);
+    }
 
+    const id = params.id || Id.create();
     this._state = {
-      id: params.id || Id.create(),
+      id,
+      name: params.name || id,
       userId: params.userId,
       initialNumberOfKegs: params.initialNumberOfKegs,
       remainingKegs: params.remainingKegs || params.initialNumberOfKegs,
