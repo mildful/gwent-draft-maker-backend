@@ -9,12 +9,16 @@ import Faction from "../../domain/models/Faction";
 import DraftService from "../../application/services/DraftService";
 import Logger from "../../domain/models/utils/Logger";
 import { Validator } from "../../domain/shared/Validator";
+import { DeckDto, DeckResource } from "./dto/deck/DeckResource";
+import DeckService from "../../application/services/DeckService";
+import DeckSerializer from "./dto/deck/DeckSerializer";
 
 @controller('/drafts')
 export class DraftController {
   constructor(
     @inject('Logger') private readonly logger: Logger,
     @inject('Service') @named('Draft') private readonly draftService: DraftService,
+    @inject('Service') @named('Deck') private readonly deckService: DeckService,
   ) { }
 
   @httpGet('/')
@@ -47,10 +51,40 @@ export class DraftController {
 
   @httpGet('/:id')
   public async selectDraft(
-    @requestParam('id') id: number,
+    @requestParam('id') id: string,
   ): Promise<DtoWithLinks<DraftDto>> {
-    Validator.validate(id, Validator.isNumber, `Invalid id: ${id}`);
-    const draft = await this.draftService.getDraftById(id);
+    const numberId = Number(id);
+    Validator.validate(numberId, Validator.isNumber, `Invalid id: ${numberId}`);
+    const draft = await this.draftService.getDraftById(numberId);
     return DraftSerializer.toDto(draft);
+  }
+
+  @httpPost('/:draftId/decks')
+  public async createNewDeck(
+    @requestParam('draftId') draftId: string,
+    @requestBody() body: unknown,
+  ): Promise<DtoWithLinks<DeckDto>> {
+    const parentDraftId = Number(draftId);
+    Validator.validate(parentDraftId, Validator.isNumber, `Invalid draftId: ${parentDraftId}`);
+
+    this.logger.info('[DeckController][createNewDeck] Validating body based on schema...');
+    if (!DeckResource.validate_createDeck(body)) {
+      throw new Error('Invalid body');
+    }
+
+    const { faction, secondaryFaction, name } = body;
+
+    const deck = await this.deckService.createNewDeck({
+      name,
+      faction: faction as Faction,
+      parentDraftId,
+      secondaryFaction: secondaryFaction as Faction,
+      // TODO: placeholder
+      contentVersion: 'v1',
+      leader: {} as any,
+      stratagem: {} as any,
+    });
+
+    return DeckSerializer.toDto(deck);
   }
 }

@@ -11,6 +11,10 @@ export default abstract class DraftSerializer {
       .addLink({ rel: 'self', method: 'GET', href: `/drafts/${draft.id}` })
       .addLink(DraftListResource.link_listDrafts(), { condition: !options.isPartOfCollection })
       .addLink(DraftResource.link_createDraft(), { condition: !options.isPartOfCollection })
+      .addLink(
+        DeckResource.link_createDeck({ parentDraftId: draft.id as number }),
+        { condition: !options.isPartOfCollection && !!draft.id }
+      )
       .serialize();
   }
 }

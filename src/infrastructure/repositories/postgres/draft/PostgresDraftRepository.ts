@@ -4,7 +4,7 @@ import DraftRepository from "../../DraftRepository";
 import PostgresLayer from "../PostgresLayer";
 import { DRAFTS_TABLE_NAME } from "../TableDefinitions";
 import { DraftEntity } from "./PostgresDraftEntity";
-import { PostgresDraftSerializer } from "./PostgresDraftSerializer";
+import PostgresDraftSerializer from "./PostgresDraftSerializer";
 import Logger from "../../../../domain/models/utils/Logger";
 import { ServerError } from "../../../../domain/shared/Errors";
 
@@ -70,7 +70,7 @@ export default class PostgresDraftRepository implements DraftRepository {
 
   private async insertNew(draft: Draft): Promise<Draft> {
     try {
-      const draftEntityWithoutId: Omit<DraftEntity, 'id'> = PostgresDraftSerializer.toEntity(draft);
+      const draftEntityWithoutId = PostgresDraftSerializer.toEntity<true>(draft);
       const result = await this.postgresLayer.pool.query(
         `INSERT INTO ${DRAFTS_TABLE_NAME}
         (user_id, initial_number_of_kegs, remaining_kegs, game_version, available_factions)

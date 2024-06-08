@@ -1,22 +1,22 @@
 import Deck from "../../../../domain/models/Deck";
-import Draft from "../../../../domain/models/Draft";
 import Faction, { isValidFaction } from "../../../../domain/models/Faction";
 import { ValidationError } from "../../../../domain/shared/Errors";
+import BaseSerializer from "../BaseSerializer";
 import { DeckEntity } from "./PostgresDeckEntity";
 
-export abstract class PostgresDeckSerializer {
-  public static toEntity(model: Deck): DeckEntity {
+const PostgresDeckSerializer: BaseSerializer<Deck, DeckEntity> = {
+  toEntity: (model: Deck) => {
     return {
-      id: model.id || null,
+      id: model.id as number,
       name: model.name,
       draft_id: model.parentDraftId,
       content_version: model.contentVersion,
       faction: model.faction,
       secondary_faction: model.secondaryFaction,
     };
-  }
+  },
 
-  public static toModel(entity: DeckEntity): Deck {
+  toModel: (entity: DeckEntity) => {
     if (!entity.id) {
       throw new ValidationError(`[DbDeckSerializer][toModel] Invalid id: ${entity.id}`);
     }
@@ -39,4 +39,6 @@ export abstract class PostgresDeckSerializer {
       cards: [] as any[],
     });
   }
-}
+};
+
+export default PostgresDeckSerializer;

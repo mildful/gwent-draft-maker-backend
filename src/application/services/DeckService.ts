@@ -10,7 +10,9 @@ export default class DeckService {
   ) { }
 
   public async createNewDeck(deckParams: DeckCreateParams): Promise<Deck> {
-    throw new Error("Method not implemented.");
+    const newDeck = new Deck(deckParams);
+    const insertedDeck = await this.deckRepository.save(newDeck);
+    return insertedDeck;
   }
 
   public async getDeckById(id: number): Promise<Deck> {

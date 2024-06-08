@@ -1,22 +1,23 @@
 import Draft from "../../../../domain/models/Draft";
 import Faction, { isValidFaction } from "../../../../domain/models/Faction";
 import { ValidationError } from "../../../../domain/shared/Errors";
+import BaseSerializer from "../BaseSerializer";
 import { DraftEntity } from "./PostgresDraftEntity";
 
-export abstract class PostgresDraftSerializer {
-  public static toEntity(model: Draft): DraftEntity {
+const PostgresDraftSerializer: BaseSerializer<Draft, DraftEntity> = {
+  toEntity: (model: Draft) => {
     return {
-      id: model.id || null,
-      name: model.name || null,
+      id: model.id as number,
+      name: model.name,
       user_id: model.userId,
       initial_number_of_kegs: model.initialNumberOfKegs,
       remaining_kegs: model.remainingKegs,
       game_version: model.gameVersion,
       available_factions: model.availableFactions,
     };
-  }
+  },
 
-  public static toModel(entity: DraftEntity): Draft {
+  toModel: (entity: DraftEntity) => {
     if (!entity.id) {
       throw new ValidationError(`[DbDraftSerializer][toModel] Invalid id: ${entity.id}`);
     }
@@ -34,5 +35,7 @@ export abstract class PostgresDraftSerializer {
       gameVersion: entity.game_version,
       availableFactions: entity.available_factions as Faction[],
     });
-  }
-}
+  },
+};
+
+export default PostgresDraftSerializer;

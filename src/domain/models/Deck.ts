@@ -2,22 +2,22 @@ import { DeckInvalidCardError } from "../errors/DeckInvalidCardError";
 import { Validator } from "../shared/Validator";
 import Card from "./Card";
 import { ContentVersion } from "./ContentVersion";
-import Draft from "./Draft";
 import Faction from "./Faction";
 
 export interface DeckCreateParams {
+  id?: number;
   contentVersion: ContentVersion;
   faction: Faction;
   leader: Card;
   stratagem: Card;
-  parentDraftId?: number;
+  parentDraftId: number;
   name?: string;
   cards?: Card[];
   secondaryFaction?: Faction;
 }
 
 interface DeckState {
-  id: number | null;
+  id?: number;
   cards: Card[];
   leader: Card;
   stratagem: Card;
@@ -31,7 +31,7 @@ interface DeckState {
 export default class Deck {
   private _state: DeckState;
 
-  public get id(): number | null { return this._state.id; }
+  public get id(): number | undefined { return this._state.id; }
   public get name(): string | undefined { return this._state.name; }
   public get cards(): Card[] { return this._state.cards; }
   public get contentVersion(): ContentVersion { return this._state.contentVersion; }
@@ -42,7 +42,7 @@ export default class Deck {
   public get parentDraftId(): number { return this._state.parentDraftId; }
   public get factions(): Faction[] { return [this.faction, this.secondaryFaction].filter(f => f !== null) as Faction[]; }
 
-  constructor(params: DeckState) {
+  constructor(params: DeckCreateParams) {
     Validator.validate(params, Validator.isObject, `[Deck][constructor] params must be an object: ${params}`);
     Validator.validate(params.name, Validator.isNonEmptyString, `[Deck][constructor] params.name must be a non-empty string: ${params.name}`);
     Validator.validate(params.contentVersion, Validator.isNonEmptyString, `[Deck][constructor] params.contentVersion must be a non-empty string: ${params.contentVersion}`);

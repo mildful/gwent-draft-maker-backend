@@ -1,11 +1,12 @@
 import { inject, named } from "inversify";
-import { controller, httpGet, requestParam } from "inversify-express-utils";
+import { controller, httpGet, httpPost, requestBody, requestParam } from "inversify-express-utils";
 import { DtoWithLinks } from "./dto/BaseResource";
 import Logger from "../../domain/models/utils/Logger";
 import { Validator } from "../../domain/shared/Validator";
-import { DeckDto } from "./dto/deck/DeckResource";
+import { DeckDto, DeckResource } from "./dto/deck/DeckResource";
 import DeckSerializer from "./dto/deck/DeckSerializer";
 import DeckService from "../../application/services/DeckService";
+import Faction from "../../domain/models/Faction";
 
 @controller('/decks')
 export class DeckController {
@@ -16,10 +17,11 @@ export class DeckController {
 
   @httpGet('/:id')
   public async selectDeck(
-    @requestParam('id') id: number,
+    @requestParam('id') id: string,
   ): Promise<DtoWithLinks<DeckDto>> {
-    Validator.validate(id, Validator.isNumber, `Invalid id: ${id}`);
-    const deck = await this.deckService.getDeckById(id);
+    const numberId = Number(id);
+    Validator.validate(numberId, Validator.isNumber, `Invalid id: ${numberId}`);
+    const deck = await this.deckService.getDeckById(numberId);
     return DeckSerializer.toDto(deck);
   }
 }

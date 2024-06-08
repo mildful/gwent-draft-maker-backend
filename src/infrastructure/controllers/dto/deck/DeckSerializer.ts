@@ -5,10 +5,13 @@ import { DraftListResource } from '../draftList/DraftListResource';
 import { DeckDto, DeckResource } from './DeckResource';
 
 export default abstract class DeckSerializer {
-  public static toDto(model: Deck): DtoWithLinks<DeckDto> {
+  public static toDto(model: Deck, options = { isPartOfCollection: false }): DtoWithLinks<DeckDto> {
     return new DeckResource(model)
       .addLink({ rel: 'self', method: 'GET', href: `/decks/${model.id}` }, { condition: !!model.id })
-      .addLink({ rel: 'select-parent-draft', method: 'GET', href: `/drafts/${model.parentDraftId}` }, { condition: !!model.parentDraftId })
+      .addLink(
+        { rel: 'select-parent-draft', method: 'GET', href: `/drafts/${model.parentDraftId}` },
+        { condition: !!model.parentDraftId && !options.isPartOfCollection }
+      )
       .addLink(DraftListResource.link_listDrafts())
       .addLink(DraftResource.link_createDraft())
       .serialize();

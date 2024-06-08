@@ -1,5 +1,7 @@
 import Deck from "../../../../domain/models/Deck";
 import Draft from "../../../../domain/models/Draft";
+import { isValidFaction } from "../../../../domain/models/Faction";
+import { Validator } from "../../../../domain/shared/Validator";
 import BaseResource, { Link } from "../BaseResource";
 import DraftResource, { DraftDto } from "../draft/DraftResource";
 import DraftSerializer from "../draft/DraftSerializer";
@@ -27,5 +29,37 @@ export class DeckResource extends BaseResource<DeckDto> {
       leader: deck.leader,
       stratagem: deck.stratagem,
     };
+  }
+
+  public static link_createDeck(options: { parentDraftId: number }): Link {
+    return {
+      rel: 'create-deck',
+      method: 'POST',
+      href: `/drafts/${options.parentDraftId}/decks`,
+      schema: {
+        type: "object",
+        properties: {
+          faction: { type: "string" },
+          name: { type: "string" },
+          secondaryFaction: { type: "string" },
+        },
+        required: ["faction"]
+      }
+    };
+  }
+  public static validate_createDeck(data: any): data is {
+    faction: string,
+    name?: string,
+    secondaryFaction?: string,
+  } {
+    Validator.validate(data, Validator.isObject, `[DeckResource][validate_createDeck] data must be an object`);
+    Validator.validate(data.faction, isValidFaction, `[DeckResource][validate_createDeck] data.faction must be a string`);
+    if (data.name) {
+      Validator.validate(data.name, Validator.isString, `[DeckResource][validate_createDeck] data.name must be a string`);
+    }
+    if (data.secondaryFaction) {
+      Validator.validate(data.secondaryFaction, isValidFaction, `[DeckResource][validate_createDeck] data.secondaryFaction must be a string`);
+    }
+    return true;
   }
 }

@@ -4,7 +4,7 @@ import Logger from "../../../../domain/models/utils/Logger";
 import DeckRepository from "../../DeckRepository";
 import Deck from "../../../../domain/models/Deck";
 import { DECKS_TABLE_NAME } from "../TableDefinitions";
-import { PostgresDeckSerializer } from "./PostgresDeckSerializer";
+import PostgresDeckSerializer from "./PostgresDeckSerializer";
 import { DeckEntity } from "./PostgresDeckEntity";
 
 @injectable()
@@ -15,7 +15,11 @@ export default class PostgresDeckRepository implements DeckRepository {
   ) { }
 
   public async save(deck: Deck): Promise<Deck> {
-    throw new Error("Method not implemented.");
+    if (deck.id) {
+      return this.updateExisting(deck);
+    } else {
+      return this.insertNew(deck);
+    }
   }
 
   public async findById(id: number): Promise<Deck | null> {
@@ -27,6 +31,52 @@ export default class PostgresDeckRepository implements DeckRepository {
       return PostgresDeckSerializer.toModel(result.rows[0] as DeckEntity);
     } catch (error) {
       this.logger.error(`[PostgresDeckRepository] [getById] Error getting deck by id: "${id}"`);
+      throw error;
+    }
+  }
+
+  private async updateExisting(deck: Deck): Promise<Deck> {
+    try {
+      const deckEntity = PostgresDeckSerializer.toEntity(deck);
+      await this.postgresLayer.pool.query(
+        `UPDATE ${DECKS_TABLE_NAME}
+        SET content_version = $1, draft_id = $2, name = $3, secondary_faction = $4, faction = $5
+        WHERE id = $5`,
+        [
+          deckEntity.content_version,
+          deckEntity.draft_id,
+          deckEntity.name,
+          deckEntity.secondary_faction,
+          deckEntity.faction,
+          deckEntity.id,
+        ],
+      );
+      return deck;
+    } catch (error) {
+      this.logger.error(`[PostgresDeckRepository] [updateExisting] Error updating deck`);
+      throw error;
+    }
+  }
+
+  private async insertNew(deck: Deck): Promise<Deck> {
+    try {
+      const deckEntityWithoutId = PostgresDeckSerializer.toEntity<true>(deck);
+      const result = await this.postgresLayer.pool.query(
+        `INSERT INTO ${DECKS_TABLE_NAME}
+        (content_version, draft_id, name, faction, secondary_faction)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *`,
+        [
+          deckEntityWithoutId.content_version,
+          deckEntityWithoutId.draft_id,
+          deckEntityWithoutId.name,
+          deckEntityWithoutId.faction,
+          deckEntityWithoutId.secondary_faction,
+        ],
+      );
+      return PostgresDeckSerializer.toModel(result.rows[0] as DeckEntity);
+    } catch (error) {
+      this.logger.error(`[PostgresDeckRepository] [insertNew] Error inserting new deck`);
       throw error;
     }
   }

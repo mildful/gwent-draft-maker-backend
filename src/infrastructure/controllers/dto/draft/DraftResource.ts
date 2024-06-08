@@ -1,10 +1,13 @@
 import Draft from "../../../../domain/models/Draft";
 import { Validator } from "../../../../domain/shared/Validator";
-import BaseResource, { Link, Schema } from "../BaseResource";
+import BaseResource, { DtoWithLinks, Link } from "../BaseResource";
+import { DeckDto } from "../deck/DeckResource";
+import DeckSerializer from "../deck/DeckSerializer";
 
 export interface DraftDto {
   totalKegs: number;
   remainingKegs: number;
+  decks: DtoWithLinks<DeckDto>[];
 }
 
 export default class DraftResource extends BaseResource<DraftDto> {
@@ -14,6 +17,7 @@ export default class DraftResource extends BaseResource<DraftDto> {
     this._dto = {
       totalKegs: model.initialNumberOfKegs,
       remainingKegs: model.remainingKegs,
+      decks: model.decks.map(deck => DeckSerializer.toDto(deck, { isPartOfCollection: true })),
     };
   }
 
