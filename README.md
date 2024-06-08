@@ -1,7 +1,15 @@
 ## GET /drafts
 ```js
 {
-  drafts: [],
+  drafts: [
+    {
+      id: 123,
+      // ...
+      links: [
+        // ... see links below
+      ]
+    }
+  ],
   links: [
     { rel: "list-drafts", method: "GET", href: "/drafts" },
     {
@@ -33,6 +41,7 @@
   links: [
     { rel: "self", method: "GET", href: "/drafts/123" },
     { rel: "list-drafts", method: "GET", href: "/drafts" },
+    // + createDraft (voir au dessus)
     { rel: "get-current-keg", method: "GET", href: "/drafts/123/keg" }, // only current keg exists
     { rel: "open-keg", method: "POST", href: "/drafts/123/keg" }, // only if remainingKegs > 0 and no current keg
     {

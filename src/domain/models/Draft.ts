@@ -47,7 +47,7 @@ export default class Draft {
   public get inventory(): Card[] { return this._state.inventory; }
   public get currentKeg(): Keg | null { return this._state.currentKeg; }
 
-  constructor(params: DraftState) {
+  constructor(params: DraftCreateParams) {
     Validator.validate(params, Validator.isObject, `[Draft][constructor] params must be an object: ${params}`);
     Validator.validate(params.userId, Validator.isNonEmptyString, `[Draft][constructor] params.userId must be a non-empty string: ${params.userId}`);
     Validator.validate(params.initialNumberOfKegs, Validator.isNumber, `[Draft][constructor] params.initialNumberOfKegs must be a number: ${params.initialNumberOfKegs}`);

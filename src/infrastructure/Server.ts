@@ -14,7 +14,8 @@ import { AuthMiddleware } from './middlewares/AuthMiddleware';
 import { CorsMiddleware } from './middlewares/CorsMiddleware';
 import { LogMiddleware } from './middlewares/LogMiddleware';
 
-import './controllers/ConfigController';
+// TODO: automatically import based on file system
+import './controllers/DraftController';
 
 export default class Server {
   private readonly logger: Logger;

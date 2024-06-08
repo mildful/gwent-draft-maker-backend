@@ -16,7 +16,7 @@ export class AuthMiddleware extends BaseMiddleware {
   }
 
   public async handler(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const token = req.header('test');
+    const token = req.header('test'); // TODO: handle the right header from Firebase
 
     if (!token) {
       return next();

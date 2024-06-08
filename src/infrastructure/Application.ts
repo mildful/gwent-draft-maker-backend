@@ -18,8 +18,6 @@ import UserRepository from './repositories/UserRepository';
 import BcryptHash from './utils/BcryptHash';
 import Hash from '../domain/models/utils/Hash';
 import AuthProvider from './providers/auth/AuthProvider';
-import InMemoryUserRepository from './repositories/inMemory/InMemoryUserRepository';
-import { ApplicationConfig } from '../domain/models/ApplicationConfig';
 import FirebaseAuthProvider from './providers/auth/FirebaseAuthProvider';
 
 export class Application {
@@ -77,9 +75,6 @@ export class Application {
     this.container.bind<Clock>('Clock').toConstantValue(new SystemClock());
     this.container.bind<HttpClient>('Http').toConstantValue(new AxiosHttpClient());
     this.container.bind<Hash>('Hash').toConstantValue(new BcryptHash());
-    this.container.bind<ApplicationConfig>('AppConfig').toConstantValue({
-      environment: 'local', // TODO: dynamic
-    });
   }
 
   private async bindRepositories(): Promise<void> {
@@ -90,7 +85,7 @@ export class Application {
     // await mongodbLayer.initialize();
     // this.container.bind<MongoDbLayer>('MongoDbLayer').toConstantValue(mongodbLayer);
 
-    this.container.bind<UserRepository>('Repository').to(InMemoryUserRepository).whenTargetNamed('User');
+    // this.container.bind<UserRepository>('Repository').to(InMemoryUserRepository).whenTargetNamed('User');
   }
 
   private bindServices(): void {
