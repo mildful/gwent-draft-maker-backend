@@ -49,7 +49,7 @@ export class DraftController {
   public async selectDraft(
     @requestParam('id') id: number,
   ): Promise<DtoWithLinks<DraftDto>> {
-    Validator.validate(id, Validator.isString, `Invalid id: ${id}`);
+    Validator.validate(id, Validator.isNumber, `Invalid id: ${id}`);
     const draft = await this.draftService.getDraftById(id);
     return DraftSerializer.toDto(draft);
   }

@@ -88,13 +88,18 @@ export default class Draft {
     };
   }
 
-  public openNewKeg(keg: Keg): void {
+  public verifyCanOpenNewKeg(): boolean {
     if (this._state.remainingKegs <= 0) {
       throw new NoRemainingKegError();
     }
     if (this._state.currentKeg) {
       throw new CurrentKegAlreadyExistsError();
     }
+    return true;
+  }
+
+  public openNewKeg(keg: Keg): void {
+    this.verifyCanOpenNewKeg();
     this._state.remainingKegs -= 1;
     this._state.currentKeg = keg;
   }

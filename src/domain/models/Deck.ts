@@ -2,43 +2,44 @@ import { DeckInvalidCardError } from "../errors/DeckInvalidCardError";
 import { Validator } from "../shared/Validator";
 import Card from "./Card";
 import { ContentVersion } from "./ContentVersion";
+import Draft from "./Draft";
 import Faction from "./Faction";
-import { Id } from "./utils/Id";
 
 export interface DeckCreateParams {
-  name: string;
   contentVersion: ContentVersion;
   faction: Faction;
-  version: string;
   leader: Card;
   stratagem: Card;
+  parentDraftId?: number;
+  name?: string;
   cards?: Card[];
   secondaryFaction?: Faction;
 }
 
 interface DeckState {
-  id: Id;
-  name: string;
+  id: number | null;
   cards: Card[];
   leader: Card;
   stratagem: Card;
   contentVersion: ContentVersion;
   faction: Faction;
-  version: string;
-  secondaryFaction: Faction | null;
+  parentDraftId: number;
+  secondaryFaction?: Faction;
+  name?: string;
 }
 
 export default class Deck {
   private _state: DeckState;
 
-  public get id(): Id { return this._state.id; }
-  public get name(): string { return this._state.name; }
+  public get id(): number | null { return this._state.id; }
+  public get name(): string | undefined { return this._state.name; }
   public get cards(): Card[] { return this._state.cards; }
   public get contentVersion(): ContentVersion { return this._state.contentVersion; }
   public get faction(): Faction { return this._state.faction; }
   public get leader(): Card { return this._state.leader; }
   public get stratagem(): Card { return this._state.stratagem; }
-  public get secondaryFaction(): Faction | null { return this._state.secondaryFaction; }
+  public get secondaryFaction(): Faction | undefined { return this._state.secondaryFaction; }
+  public get parentDraftId(): number { return this._state.parentDraftId; }
   public get factions(): Faction[] { return [this.faction, this.secondaryFaction].filter(f => f !== null) as Faction[]; }
 
   constructor(params: DeckState) {
@@ -46,7 +47,7 @@ export default class Deck {
     Validator.validate(params.name, Validator.isNonEmptyString, `[Deck][constructor] params.name must be a non-empty string: ${params.name}`);
     Validator.validate(params.contentVersion, Validator.isNonEmptyString, `[Deck][constructor] params.contentVersion must be a non-empty string: ${params.contentVersion}`);
     Validator.validate(params.faction, Validator.isNonEmptyString, `[Deck][constructor] params.faction must be a non-empty string: ${params.faction}`);
-    Validator.validate(params.version, Validator.isNonEmptyString, `[Deck][constructor] params.version must be a non-empty string: ${params.version}`);
+    Validator.validate(params.parentDraftId, Validator.isNumber, `[Deck][constructor] Invalid parent draft id: ${params.parentDraftId}`);
 
     if (params.secondaryFaction) {
       Validator.validate(params.secondaryFaction, Validator.isString, `[Deck][constructor] params.secondaryFaction must be a string: ${params.secondaryFaction}`);
@@ -55,19 +56,21 @@ export default class Deck {
       Validator.validate(params.cards, Validator.isArray, `[Deck][constructor] params.cards must be an array: ${params.cards}`);
     }
     if (params.id) {
-      Validator.validate(Id.isValid(params.id), `[User][constructor] Invalid id: ${params.id}`);
+      Validator.validate(params.id, Validator.isNumber, `[Deck][constructor] Invalid id: ${params.id}`);
+    }
+    if (params.parentDraftId) {
     }
 
     this._state = {
-      id: params.id || Id.create(),
+      id: params.id,
+      parentDraftId: params.parentDraftId,
       name: params.name,
       cards: params.cards || [],
       leader: params.leader,
       stratagem: params.stratagem,
       contentVersion: params.contentVersion,
       faction: params.faction,
-      version: params.version,
-      secondaryFaction: params.secondaryFaction || null,
+      secondaryFaction: params.secondaryFaction,
     };
   }
 

@@ -5,7 +5,7 @@ services:
     shm_size: 128mb
     environment:
       POSTGRES_PASSWORD: myPassword # TODO: in secrets
-      POSTGRES_DB: gwent_draft_maker
+      # POSTGRES_DB: gwent_draft_maker
     ports:
       - "5432:5432"
     volumes:

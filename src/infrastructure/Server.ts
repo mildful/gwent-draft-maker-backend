@@ -16,6 +16,7 @@ import { LogMiddleware } from './middlewares/LogMiddleware';
 
 // TODO: automatically import based on file system
 import './controllers/DraftController';
+import './controllers/DeckController';
 
 export default class Server {
   private readonly logger: Logger;

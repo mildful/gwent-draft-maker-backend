@@ -1,7 +1,8 @@
+import { DeckEntity } from "./deck/PostgresDeckEntity";
 import { DraftEntity } from "./draft/PostgresDraftEntity";
 
 export interface FieldProperty {
-  type: 'jsonb' | 'serial' | 'varchar' | 'smallint';
+  type: 'jsonb' | 'serial' | 'varchar' | 'smallint' | 'char';
   isPrimaryKey?: boolean;
   length?: number;
   references?: { table: string, field: string };
@@ -27,6 +28,20 @@ export const draftTableDefinition: TableDefinition<DraftEntity> = {
   }
 };
 
+export const DECKS_TABLE_NAME = 'decks';
+export const deckTableDefinition: TableDefinition<DeckEntity> = {
+  tableName: DECKS_TABLE_NAME,
+  fields: {
+    id: { type: 'serial', isPrimaryKey: true },
+    draft_id: { type: 'serial', references: { table: DRAFTS_TABLE_NAME, field: 'id' } },
+    name: { type: 'varchar', length: 50, nullable: true },
+    content_version: { type: 'varchar', length: 10 },
+    faction: { type: 'char', length: 2 },
+    secondary_faction: { type: 'char', length: 2, nullable: true },
+  }
+};
+
 export default [
   draftTableDefinition,
+  deckTableDefinition,
 ] as TableDefinition[];

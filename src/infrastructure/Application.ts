@@ -24,6 +24,9 @@ import PostgresDraftRepository from './repositories/postgres/draft/PostgresDraft
 import Config, { DatabaseConfig, DatabasePostgresConfig } from './Config';
 import PostgresLayer from './repositories/postgres/PostgresLayer';
 import DraftService from '../application/services/DraftService';
+import DeckService from '../application/services/DeckService';
+import DeckRepository from './repositories/DeckRepository';
+import PostgresDeckRepository from './repositories/postgres/deck/PostgresDeckRepository';
 
 export class Application {
   public readonly container: Container;
@@ -136,10 +139,12 @@ export class Application {
 
     this.container.bind<PostgresLayer>('PostgresLayer').toConstantValue(postgresLayer);
     this.container.bind<DraftRepository>('Repository').to(PostgresDraftRepository).whenTargetNamed('Draft');
+    this.container.bind<DeckRepository>('Repository').to(PostgresDeckRepository).whenTargetNamed('Deck');
   }
 
   private bindServices(): void {
     this.container.bind<DraftService>('Service').to(DraftService).whenTargetNamed('Draft');
+    this.container.bind<DeckService>('Service').to(DeckService).whenTargetNamed('Deck');
   }
 
   private bindProviders(): void {

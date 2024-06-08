@@ -69,9 +69,9 @@
   links: [
     { rel: "self", method: "GET", href: "/drafts/123/keg" },
     {
-      rel: "add-cards-to-inventory",
+      rel: "confirm-cards-choice",
       method: "PATCH",
-      href: "/drafts/123/inventory",
+      href: "/drafts/123/keg/confirm-choice",
       schema: {
         type: "object",
         cardIds: { type: "array", items: { type: "number" }},

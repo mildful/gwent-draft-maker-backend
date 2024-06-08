@@ -2,6 +2,7 @@ export enum ErrorCode {
   CANNOT_ADD_DECK_TO_DRAFT = 'CannotAddDeckToDraft',
   CURRENT_KEG_ALREADY_EXISTS = 'CurrentKegAlreadyExists',
   DECK_INVALID_CARD = 'DeckInvalidCard',
+  DECK_NOT_FOUND = 'DeckNotFound',
   DRAFT_NOT_FOUND = 'DraftNotFound',
   USER_NOT_FOUND = 'UserNotFound',
   GENERIC_CONFLICT = 'GenericConflictError',
