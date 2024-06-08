@@ -1,4 +1,4 @@
-import { DraftEntity } from "./draft/PostgresDraftEntities";
+import { DraftEntity } from "./draft/PostgresDraftEntity";
 
 export interface FieldProperty {
   type: 'jsonb' | 'serial' | 'varchar' | 'smallint';

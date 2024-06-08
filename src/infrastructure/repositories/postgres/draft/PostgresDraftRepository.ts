@@ -3,7 +3,7 @@ import Draft from "../../../../domain/models/Draft";
 import DraftRepository from "../../DraftRepository";
 import PostgresLayer from "../PostgresLayer";
 import { DRAFTS_TABLE_NAME } from "../TableDefinitions";
-import { DraftEntity } from "./PostgresDraftEntities";
+import { DraftEntity } from "./PostgresDraftEntity";
 import { PostgresDraftSerializer } from "./PostgresDraftSerializer";
 import Logger from "../../../../domain/models/utils/Logger";
 import { ServerError } from "../../../../domain/shared/Errors";

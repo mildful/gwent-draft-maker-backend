@@ -1,7 +1,7 @@
 import Draft from "../../../../domain/models/Draft";
 import Faction, { isValidFaction } from "../../../../domain/models/Faction";
 import { ValidationError } from "../../../../domain/shared/Errors";
-import { DraftEntity } from "./PostgresDraftEntities";
+import { DraftEntity } from "./PostgresDraftEntity";
 
 export abstract class PostgresDraftSerializer {
   public static toEntity(model: Draft): DraftEntity {
