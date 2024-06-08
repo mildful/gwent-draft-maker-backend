@@ -63,6 +63,10 @@ export default class Card {
     this._state = params;
   }
 
+  public factions(): Faction[] {
+    return [this.faction, this.secondaryFaction].filter(f => f !== null) as Faction[];
+  }
+
   public static isValid(data: unknown): data is Card {
     return data instanceof Card;
   }

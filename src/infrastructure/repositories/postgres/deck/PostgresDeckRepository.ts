@@ -50,13 +50,12 @@ export default class PostgresDeckRepository implements DeckRepository {
       const deckEntity = PostgresDeckSerializer.toEntity(deck);
       await this.postgresLayer.pool.query(
         `UPDATE ${DECKS_TABLE_NAME}
-        SET content_version = $1, draft_id = $2, name = $3, secondary_faction = $4, faction = $5
+        SET content_version = $1, draft_id = $2, name = $3, faction = $5
         WHERE id = $5`,
         [
           deckEntity.content_version,
           deckEntity.draft_id,
           deckEntity.name,
-          deckEntity.secondary_faction,
           deckEntity.faction,
           deckEntity.id,
         ],
@@ -73,15 +72,14 @@ export default class PostgresDeckRepository implements DeckRepository {
       const deckEntityWithoutId = PostgresDeckSerializer.toEntity<true>(deck);
       const result = await this.postgresLayer.pool.query(
         `INSERT INTO ${DECKS_TABLE_NAME}
-        (content_version, draft_id, name, faction, secondary_faction)
-        VALUES ($1, $2, $3, $4, $5)
+        (content_version, draft_id, name, faction)
+        VALUES ($1, $2, $3, $4)
         RETURNING *`,
         [
           deckEntityWithoutId.content_version,
           deckEntityWithoutId.draft_id,
           deckEntityWithoutId.name,
           deckEntityWithoutId.faction,
-          deckEntityWithoutId.secondary_faction,
         ],
       );
       return PostgresDeckSerializer.toModel(result.rows[0] as DeckEntity);

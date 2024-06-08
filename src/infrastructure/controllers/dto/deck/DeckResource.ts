@@ -3,15 +3,12 @@ import Draft from "../../../../domain/models/Draft";
 import { isValidFaction } from "../../../../domain/models/Faction";
 import { Validator } from "../../../../domain/shared/Validator";
 import BaseResource, { Link } from "../BaseResource";
-import DraftResource, { DraftDto } from "../draft/DraftResource";
-import DraftSerializer from "../draft/DraftSerializer";
 
 export interface DeckDto {
   name: string;
   cards: any[]; // TODO: cardDto in here
   contentVersion: string;
   faction: string;
-  secondaryFaction?: string;
   leader: any; // TODO: cardDto in here
   stratagem: any; // TODO: cardDto in here
 }
@@ -25,7 +22,6 @@ export class DeckResource extends BaseResource<DeckDto> {
       cards: deck.cards,
       contentVersion: deck.contentVersion,
       faction: deck.faction,
-      secondaryFaction: deck.secondaryFaction,
       leader: deck.leader,
       stratagem: deck.stratagem,
     };

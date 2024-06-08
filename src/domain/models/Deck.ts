@@ -13,7 +13,6 @@ export interface DeckCreateParams {
   parentDraftId: number;
   name?: string;
   cards?: Card[];
-  secondaryFaction?: Faction;
 }
 
 interface DeckState {
@@ -24,7 +23,6 @@ interface DeckState {
   contentVersion: ContentVersion;
   faction: Faction;
   parentDraftId: number;
-  secondaryFaction?: Faction;
   name?: string;
 }
 
@@ -38,9 +36,7 @@ export default class Deck {
   public get faction(): Faction { return this._state.faction; }
   public get leader(): Card { return this._state.leader; }
   public get stratagem(): Card { return this._state.stratagem; }
-  public get secondaryFaction(): Faction | undefined { return this._state.secondaryFaction; }
   public get parentDraftId(): number { return this._state.parentDraftId; }
-  public get factions(): Faction[] { return [this.faction, this.secondaryFaction].filter(f => f !== null) as Faction[]; }
 
   constructor(params: DeckCreateParams) {
     Validator.validate(params, Validator.isObject, `[Deck][constructor] params must be an object: ${params}`);
@@ -49,9 +45,6 @@ export default class Deck {
     Validator.validate(params.faction, Validator.isNonEmptyString, `[Deck][constructor] params.faction must be a non-empty string: ${params.faction}`);
     Validator.validate(params.parentDraftId, Validator.isNumber, `[Deck][constructor] Invalid parent draft id: ${params.parentDraftId}`);
 
-    if (params.secondaryFaction) {
-      Validator.validate(params.secondaryFaction, Validator.isString, `[Deck][constructor] params.secondaryFaction must be a string: ${params.secondaryFaction}`);
-    }
     if (params.cards) {
       Validator.validate(params.cards, Validator.isArray, `[Deck][constructor] params.cards must be an array: ${params.cards}`);
     }
@@ -70,7 +63,6 @@ export default class Deck {
       stratagem: params.stratagem,
       contentVersion: params.contentVersion,
       faction: params.faction,
-      secondaryFaction: params.secondaryFaction,
     };
   }
 
@@ -86,7 +78,7 @@ export default class Deck {
       throw new DeckInvalidCardError('Cannot add more than 2 copies of a bronze card', { card });
     }
 
-    if (![this.faction, this.secondaryFaction].includes(card.faction)) {
+    if (!card.factions().includes(this.faction)) {
       throw new DeckInvalidCardError('Cannot add a card from a different faction', { card });
     }
 

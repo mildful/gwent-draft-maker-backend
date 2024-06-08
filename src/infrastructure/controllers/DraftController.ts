@@ -78,7 +78,6 @@ export class DraftController {
       name,
       faction: faction as Faction,
       parentDraftId,
-      secondaryFaction: secondaryFaction as Faction,
       // TODO: placeholder
       contentVersion: 'v1',
       leader: {} as any,

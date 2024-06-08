@@ -1,3 +1,6 @@
+- ne pas pouvoir creer de deck qui ne partage pas de faction avec le draft
+- retirer le secondary faction des decks
+
 ## GET /drafts
 ```js
 {

@@ -37,7 +37,6 @@ export const deckTableDefinition: TableDefinition<DeckEntity> = {
     name: { type: 'varchar', length: 50, nullable: true },
     content_version: { type: 'varchar', length: 10 },
     faction: { type: 'char', length: 2 },
-    secondary_faction: { type: 'char', length: 2, nullable: true },
   }
 };
 

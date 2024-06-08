@@ -4,5 +4,4 @@ export interface DeckEntity {
   name?: string;
   content_version: string;
   faction: string;
-  secondary_faction?: string;
 }

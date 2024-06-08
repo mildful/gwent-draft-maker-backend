@@ -12,7 +12,6 @@ const PostgresDeckSerializer: BaseSerializer<Deck, DeckEntity> = {
       draft_id: model.parentDraftId,
       content_version: model.contentVersion,
       faction: model.faction,
-      secondary_faction: model.secondaryFaction,
     };
   },
 
@@ -23,16 +22,12 @@ const PostgresDeckSerializer: BaseSerializer<Deck, DeckEntity> = {
     if (!isValidFaction(entity.faction)) {
       throw new ValidationError(`[DbDeckSerializer][toModel] Invalid faction code: ${entity.faction}`);
     }
-    if (entity.secondary_faction && !isValidFaction(entity.secondary_faction)) {
-      throw new ValidationError(`[DbDeckSerializer][toModel] Invalid faction code: ${entity.secondary_faction}`);
-    }
     return new Deck({
       id: entity.id as number,
       name: entity.name,
       parentDraftId: entity.draft_id,
       contentVersion: entity.content_version,
       faction: entity.faction as Faction,
-      secondaryFaction: entity.secondary_faction as Faction,
       // TODO: placeholder
       leader: {} as any,
       stratagem: {} as any,
