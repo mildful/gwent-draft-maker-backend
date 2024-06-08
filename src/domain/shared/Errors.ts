@@ -1,5 +1,6 @@
 export enum ErrorCode {
   CANNOT_ADD_DECK_TO_DRAFT = 'CannotAddDeckToDraft',
+  CURRENT_KEG_ALREADY_EXISTS = 'CurrentKegAlreadyExists',
   DECK_INVALID_CARD = 'DeckInvalidCard',
   USER_NOT_FOUND = 'UserNotFound',
   GENERIC_CONFLICT = 'GenericConflictError',
@@ -9,9 +10,8 @@ export enum ErrorCode {
   GENERIC_SERVER = 'GenericServerError',
   GENERIC_UNAUTHORIZED = 'GenericUnauthorizedError',
   GENERIC_VALIDATION = 'GenericValidationError',
+  NO_REMAINING_KEG = 'NoRemainingKeg',
   PAGE_NOT_FOUND = 'PageNotFound',
-  PASSWORD_TOO_WEAK = 'PasswordTooWeak',
-  PROVIDER_NOT_FOUND = 'ProviderNotFound',
 }
 
 export class DomainError extends Error {

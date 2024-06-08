@@ -1,7 +1,10 @@
 import { CannotAddDeckToDraftError } from "../errors/CannotAddDeckToDraftError";
+import { CurrentKegAlreadyExistsError } from "../errors/CurrentKegAlreadyExistsError";
+import { NoRemainingKegError } from "../errors/NoRemainingKegError";
 import { Validator } from "../shared/Validator";
 import Card, { Faction } from "./Card";
 import Deck from "./Deck";
+import Keg from "./Keg";
 import { Id } from "./utils/Id";
 
 export interface DraftCreateParams {
@@ -14,6 +17,7 @@ export interface DraftCreateParams {
   remainingKegs?: number;
   id?: string;
   name?: string;
+  currentKeg?: Keg;
 }
 
 interface DraftState {
@@ -22,6 +26,7 @@ interface DraftState {
   userId: string;
   initialNumberOfKegs: number;
   remainingKegs: number;
+  currentKeg: Keg | null;
   gameVersion: string;
   availableFactions: Faction[];
   decks: Deck[];
@@ -40,6 +45,7 @@ export default class Draft {
   public get availableFactions(): Faction[] { return this._state.availableFactions; }
   public get decks(): Deck[] { return this._state.decks; }
   public get inventory(): Card[] { return this._state.inventory; }
+  public get currentKeg(): Keg | null { return this._state.currentKeg; }
 
   constructor(params: DraftState) {
     Validator.validate(params, Validator.isObject, `[Draft][constructor] params must be an object: ${params}`);
@@ -63,6 +69,9 @@ export default class Draft {
     if (params.name) {
       Validator.validate(params.name, Validator.isNonEmptyString, `[Draft][constructor] params.name must be a non-empty string: ${params.name}`);
     }
+    if (params.currentKeg) {
+      Validator.validate(params.currentKeg, Keg.isValid, `[Draft][constructor] Invalid current keg: ${params.currentKeg}`);
+    }
 
     const id = params.id || Id.create();
     this._state = {
@@ -75,15 +84,26 @@ export default class Draft {
       availableFactions: params.availableFactions,
       decks: params.decks || [],
       inventory: params.inventory || [],
+      currentKeg: params.currentKeg || null,
     };
   }
 
-  public decreaseNumberOfRemainingKegs(): void {
+  public openNewKeg(keg: Keg): void {
+    if (this._state.remainingKegs <= 0) {
+      throw new NoRemainingKegError();
+    }
+    if (this._state.currentKeg) {
+      throw new CurrentKegAlreadyExistsError();
+    }
     this._state.remainingKegs -= 1;
+    this._state.currentKeg = keg;
   }
 
   public addCardsToInventory(cards: Card[]): void {
-    this._state.inventory.push(...cards);
+    if (this.currentKeg?.cardsAreInKeg(cards)) {
+      this._state.inventory.push(...cards);
+      this._state.currentKeg = null;
+    }
   }
 
   public addDeck(deck: Deck): void {
