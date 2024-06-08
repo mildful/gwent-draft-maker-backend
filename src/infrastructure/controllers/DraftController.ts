@@ -1,14 +1,14 @@
 import { inject, named } from "inversify";
-import { controller, httpGet, httpPost, requestBody } from "inversify-express-utils";
+import { controller, httpGet, httpPost, requestBody, requestParam } from "inversify-express-utils";
 import { DtoWithLinks } from "./dto/BaseResource";
 import DraftResource, { DraftDto } from "./dto/draft/DraftResource";
-import Draft from "../../domain/models/Draft";
 import DraftSerializer from "./dto/draft/DraftSerializer";
 import DraftListSerializer from "./dto/draftList/DraftListSerializer";
 import { DraftListDto } from "./dto/draftList/DraftListResource";
 import Faction from "../../domain/models/Faction";
 import DraftService from "../../application/services/DraftService";
 import Logger from "../../domain/models/utils/Logger";
+import { Validator } from "../../domain/shared/Validator";
 
 @controller('/drafts')
 export class DraftController {
@@ -44,14 +44,13 @@ export class DraftController {
 
     return DraftSerializer.toDto(draft);
   }
-  // @httpGet(Routes.SELECT_DRAFT)
-  // public async selectDraft(): Promise<DtoWithLinks<DraftDto>> {
-  //   return DraftSerializer.toDto(new Draft({
-  //     id: '4a588d6d-b4aa-4616-ab16-ca0e0b04f71d',
-  //     userId: '456',
-  //     initialNumberOfKegs: 3,
-  //     gameVersion: '1.0.0',
-  //     availableFactions: [Faction.MO],
-  //   }));
-  // }
+
+  @httpGet('/:id')
+  public async selectDraft(
+    @requestParam('id') id: number,
+  ): Promise<DtoWithLinks<DraftDto>> {
+    Validator.validate(id, Validator.isString, `Invalid id: ${id}`);
+    const draft = await this.draftService.getDraftById(id);
+    return DraftSerializer.toDto(draft);
+  }
 }

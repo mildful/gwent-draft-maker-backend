@@ -33,6 +33,19 @@ export default class PostgresDraftRepository implements DraftRepository {
     }
   }
 
+  public async findById(id: number): Promise<Draft | null> {
+    try {
+      const result = await this.postgresLayer.pool.query(`SELECT * FROM ${DRAFTS_TABLE_NAME} WHERE id = $1`, [id]);
+      if (result.rows.length === 0) {
+        return null;
+      }
+      return PostgresDraftSerializer.toModel(result.rows[0] as DraftEntity);
+    } catch (error) {
+      this.logger.error(`[PostgresDraftRepository] [getById] Error getting draft by id: "${id}"`);
+      throw error;
+    }
+  }
+
   private async updateExisting(draft: Draft): Promise<Draft> {
     try {
       const draftEntity = PostgresDraftSerializer.toEntity(draft);
