@@ -1,13 +1,20 @@
-import { injectable } from "inversify";
-import Draft from "../../domain/models/Draft";
+import { inject, injectable, named } from "inversify";
+import Draft, { DraftCreateParams } from "../../domain/models/Draft";
+import DraftRepository from "../../infrastructure/repositories/DraftRepository";
 
 @injectable()
 export default class DraftService {
   constructor(
-    // TODO: ...
+    @inject('Repository') @named('Draft') private readonly draftRepository: DraftRepository,
   ) { }
 
-  public async createNewDraft(params: DraftState): Promise<Draft> {
+  public async listDrafts(): Promise<Draft[]> {
+    return this.draftRepository.getAll();
+  }
 
+  public async createNewDraft(draftParams: DraftCreateParams): Promise<Draft> {
+    const draft = new Draft(draftParams);
+    const newDraft = await this.draftRepository.save(draft);
+    return newDraft;
   }
 }

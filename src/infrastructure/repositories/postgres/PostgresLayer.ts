@@ -47,6 +47,8 @@ export default class PostgresLayer {
       if (fieldDef.references) {
         fieldDefStr += ` REFERENCES ${fieldDef.references.table}(${fieldDef.references.field})`;
       }
+      fieldDefStr += fieldDef.nullable ? ' NULL' : ' NOT NULL';
+
       return fieldDefStr;
     }).join(',\n')}
     );

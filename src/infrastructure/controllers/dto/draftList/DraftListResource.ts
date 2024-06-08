@@ -1,5 +1,5 @@
 import Draft from "../../../../domain/models/Draft";
-import BaseResource from "../BaseResource";
+import BaseResource, { Link } from "../BaseResource";
 import DraftResource, { DraftDto } from "../draft/DraftResource";
 import DraftSerializer from "../draft/DraftSerializer";
 
@@ -12,7 +12,15 @@ export class DraftListResource extends BaseResource<DraftListDto> {
     super();
 
     this._dto = {
-      drafts: drafts.map(draft => DraftSerializer.toDto(draft, { allowList: false })),
+      drafts: drafts.map(draft => DraftSerializer.toDto(draft, { isPartOfCollection: true })),
+    };
+  }
+
+  static link_listDrafts(): Link {
+    return {
+      rel: 'list-drafts',
+      method: 'GET',
+      href: '/drafts',
     };
   }
 }

@@ -8,12 +8,12 @@ export interface SchemaObjectProperty {
   properties: {
     [key: string]: Schema;
   };
-  required: (keyof this['properties'])[]; // TODO: infer based on keyof['properties']
+  required: string[]; // TODO: infer based on keyof['properties']
 }
 
 export interface SchemaArrayProperty {
   type: 'array';
-  items: Schema[];
+  items: Schema;
 }
 
 export type Schema = SchemaSimpleProperty | SchemaObjectProperty | SchemaArrayProperty;

@@ -23,6 +23,7 @@ import FirebaseAuthProvider from './providers/auth/FirebaseAuthProvider';
 import PostgresDraftRepository from './repositories/postgres/draft/PostgresDraftRepository';
 import Config, { DatabaseConfig, DatabasePostgresConfig } from './Config';
 import PostgresLayer from './repositories/postgres/PostgresLayer';
+import DraftService from '../application/services/DraftService';
 
 export class Application {
   public readonly container: Container;
@@ -138,7 +139,7 @@ export class Application {
   }
 
   private bindServices(): void {
-
+    this.container.bind<DraftService>('Service').to(DraftService).whenTargetNamed('Draft');
   }
 
   private bindProviders(): void {

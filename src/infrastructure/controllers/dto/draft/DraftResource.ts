@@ -1,8 +1,10 @@
 import Draft from "../../../../domain/models/Draft";
-import BaseResource from "../BaseResource";
+import { Validator } from "../../../../domain/shared/Validator";
+import BaseResource, { Link, Schema } from "../BaseResource";
 
 export interface DraftDto {
-  id: string;
+  totalKegs: number;
+  remainingKegs: number;
 }
 
 export default class DraftResource extends BaseResource<DraftDto> {
@@ -10,7 +12,39 @@ export default class DraftResource extends BaseResource<DraftDto> {
     super();
 
     this._dto = {
-      id: model.id,
+      totalKegs: model.initialNumberOfKegs,
+      remainingKegs: model.remainingKegs,
     };
+  }
+
+  public static link_createDraft(): Link {
+    return {
+      rel: 'create-draft',
+      method: 'POST',
+      href: '/drafts',
+      schema: {
+        type: "object",
+        // TODO: should match parameters in draft controller
+        properties: {
+          initialNumberOfKegs: { type: "number" },
+          availableFactions: { type: "array", items: { type: "string" } },
+          name: { type: "string" },
+        },
+        required: ["initialNumberOfKegs", "availableFactions"]
+      }
+    };
+  }
+  public static validate_createDraft(data: any): data is {
+    initialNumberOfKegs: number,
+    availableFactions: string[],
+    name?: string
+  } {
+    Validator.validate(data, Validator.isObject, `[DraftResource][validate_create] data must be an object`);
+    Validator.validate(data?.initialNumberOfKegs, Validator.isNumber, `[DraftResource][validate_create] data.initialNumberOfKegs must be a number`);
+    Validator.validate(data?.availableFactions, Validator.isArray, `[DraftResource][validate_create] data.availableFactions must be an array`);
+    if (data?.name) {
+      Validator.validate(data.name, Validator.isString, `[DraftResource][validate_create] data.name must be a string`);
+    }
+    return true;
   }
 }

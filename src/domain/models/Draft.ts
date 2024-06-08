@@ -2,8 +2,9 @@ import { CannotAddDeckToDraftError } from "../errors/CannotAddDeckToDraftError";
 import { CurrentKegAlreadyExistsError } from "../errors/CurrentKegAlreadyExistsError";
 import { NoRemainingKegError } from "../errors/NoRemainingKegError";
 import { Validator } from "../shared/Validator";
-import Card, { Faction } from "./Card";
+import Card from "./Card";
 import Deck from "./Deck";
+import Faction, { isValidFactionArray } from "./Faction";
 import Keg from "./Keg";
 import { Id } from "./utils/Id";
 
@@ -15,13 +16,13 @@ export interface DraftCreateParams {
   inventory?: Card[];
   decks?: Deck[];
   remainingKegs?: number;
-  id?: string;
+  id?: number;
   name?: string;
   currentKeg?: Keg;
 }
 
 interface DraftState {
-  id: Id;
+  id: number | null;
   name: string;
   userId: string;
   initialNumberOfKegs: number;
@@ -36,7 +37,7 @@ interface DraftState {
 export default class Draft {
   private _state: DraftState;
 
-  public get id(): Id { return this._state.id; }
+  public get id(): number | null { return this._state.id; }
   public get name(): string { return this._state.name; }
   public get userId(): string { return this._state.userId; }
   public get initialNumberOfKegs(): number { return this._state.initialNumberOfKegs; }
@@ -52,10 +53,10 @@ export default class Draft {
     Validator.validate(params.userId, Validator.isNonEmptyString, `[Draft][constructor] params.userId must be a non-empty string: ${params.userId}`);
     Validator.validate(params.initialNumberOfKegs, Validator.isNumber, `[Draft][constructor] params.initialNumberOfKegs must be a number: ${params.initialNumberOfKegs}`);
     Validator.validate(params.gameVersion, Validator.isNonEmptyString, `[Draft][constructor] params.gameVersion must be a non-empty string: ${params.gameVersion}`);
-    Validator.validate(params.availableFactions, Validator.isArray, `[Draft][constructor] params.availableFactions must be an array: ${params.availableFactions}`);
+    Validator.validate(params.availableFactions, isValidFactionArray, `[Draft][constructor] params.availableFactions must be an array of valid factions: ${params.availableFactions}`);
 
     if (params.id) {
-      Validator.validate(Id.isValid(params.id), `[Draft][constructor] Invalid id: ${params.id}`);
+      Validator.validate(params.id, Validator.isNumber, `[Draft][constructor] Invalid id: ${params.id}`);
     }
     if (params.decks) {
       Validator.validate(params.decks, Validator.isArray, `[Draft][constructor] params.decks must be an array: ${params.decks}`);
@@ -73,10 +74,9 @@ export default class Draft {
       Validator.validate(params.currentKeg, Keg.isValid, `[Draft][constructor] Invalid current keg: ${params.currentKeg}`);
     }
 
-    const id = params.id || Id.create();
     this._state = {
-      id,
-      name: params.name || id,
+      id: params.id || null,
+      name: params.name || String(Math.floor(Math.random() * 101)),
       userId: params.userId,
       initialNumberOfKegs: params.initialNumberOfKegs,
       remainingKegs: params.remainingKegs || params.initialNumberOfKegs,

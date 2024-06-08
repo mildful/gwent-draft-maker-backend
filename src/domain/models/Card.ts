@@ -1,10 +1,10 @@
 import { Validator } from "../shared/Validator";
 import { ContentVersion } from "./ContentVersion";
+import Faction from "./Faction";
 
 export type CardType = 'Unit' | 'Special' | 'Stratagem' | 'Leader' | 'Artifact';
 export type CardColor = 'Bronze' | 'Gold' | 'Leader';
 export type CardRarity = 'Legendary' | 'Epic' | 'Rare' | 'Uncommon' | 'Common';
-export type Faction = 'NEUTRAL' | 'NR' | 'NG' | 'SK' | 'ST' | 'SY' | 'MO';
 export type CardSet = 'Price of Power' | 'Uroboros' | 'Thronebreaker' | 'Unmillable' | 'Iron Judgment' | 'Novigrad' | 'CrimsonCurse' | 'NonOwnable' | 'Merchants of Ofir' | 'Cursed Toad' | 'Master Mirror' | 'BaseSet' | 'Way of the Witcher';
 
 export type CreateCardParams = CardState;
