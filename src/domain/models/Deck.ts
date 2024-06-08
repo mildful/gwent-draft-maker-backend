@@ -1,7 +1,8 @@
 import { DeckInvalidCardError } from "../errors/DeckInvalidCardError";
 import { Validator } from "../shared/Validator";
-import Card, { Faction } from "./Card";
+import Card from "./Card";
 import { ContentVersion } from "./ContentVersion";
+import Faction from "./Faction";
 import { Id } from "./utils/Id";
 
 export interface DeckCreateParams {
@@ -108,11 +109,13 @@ export default class Deck {
     const unitCards = this._state.cards.filter(card => card.type === 'Unit');
     const leaderCount = this._state.cards.filter(card => card.type === 'Leader').length;
     const stratagemCount = this._state.cards.filter(card => card.type === 'Stratagem').length;
+    const totalProvisionCost = this._state.cards.reduce((acc, card) => acc + card.provision, 0);
 
     return this._state.cards.length >= 25
       && leaderCount === 1
       && stratagemCount === 1
-      && unitCards.length >= 13;
+      && unitCards.length >= 13
+      && totalProvisionCost <= 150 + this._state.leader.provision;
   }
 
   public static isValid(data: unknown): data is Deck {
