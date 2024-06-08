@@ -1,8 +1,14 @@
+import { inject, injectable } from "inversify";
 import Draft from "../../../../domain/models/Draft";
 import DraftRepository from "../../DraftRepository";
-import PostgresBaseRepository from "../PostgresBaseRepository";
+import PostgresLayer from "../PostgresLayer";
 
-export default class PostgresDraftRepository extends PostgresBaseRepository implements DraftRepository {
+@injectable()
+export default class PostgresDraftRepository implements DraftRepository {
+  constructor(
+    @inject('PostegresLayer') private readonly postgresLayer: PostgresLayer,
+  ) { }
+
   public async getAll(): Promise<Draft[]> {
     return [];
   }

@@ -3,7 +3,7 @@ import * as http from 'http';
 import axios from 'axios';
 import { BindingScopeEnum, Container } from 'inversify';
 import * as firebaseAdmin from 'firebase-admin/app';
-import { Client } from 'pg';
+import { Pool } from 'pg';
 
 import Logger from '../domain/models/utils/Logger';
 import ConsoleLogger from './utils/ConsoleLogger';
@@ -21,31 +21,34 @@ import Hash from '../domain/models/utils/Hash';
 import AuthProvider from './providers/auth/AuthProvider';
 import FirebaseAuthProvider from './providers/auth/FirebaseAuthProvider';
 import PostgresDraftRepository from './repositories/postgres/draft/PostgresDraftRepository';
-import PostgresBaseRepository from './repositories/postgres/PostgresBaseRepository';
+import Config, { DatabaseConfig, DatabasePostgresConfig } from './Config';
+import PostgresLayer from './repositories/postgres/PostgresLayer';
 
 export class Application {
-  private server: Server;
   public readonly container: Container;
   public readonly logger: Logger;
 
+  private server: Server;
+  private config: Config;
   private readonly context: Context;
 
   constructor() {
     this.loadEnvVars();
 
+    this.config = this.getConfig();
     this.container = new Container({ defaultScope: BindingScopeEnum.Singleton });
     this.context = new ExecutionContext();
     this.logger = new ConsoleLogger({
       context: this.context,
       applicationId: process.env.npm_package_name ?? 'undefined',
-      level: config.get<number>('logger.level'),
-      pretty: process.env.NODE_ENV === 'development',
-      enabled: config.get<boolean>('logger.enabled'),
+      level: this.config.logger.level,
+      pretty: this.config.server.environment === 'development',
+      enabled: this.config.logger.enabled,
     });
-    // this.context = 
   }
 
   public async start(): Promise<http.Server> {
+    this.bindConfig();
     this.bindUtils();
     await this.bindRepositories();
     this.bindServices();
@@ -54,9 +57,9 @@ export class Application {
 
     this.server = new Server(
       this.container,
-      config.get<number>('server.port'),
-      config.get<string[]>('server.cors.origins'),
-      config.get<boolean>('logger.middleware'),
+      this.config.server.port,
+      this.config.server.cors.origins,
+      this.config.logger.middleware,
     );
 
     return this.server.start();
@@ -72,6 +75,44 @@ export class Application {
     }
   }
 
+  private getConfig(): Config {
+    return {
+      server: {
+        port: config.get<number>('server.port'),
+        cors: {
+          origins: config.get<string[]>('server.cors.origins'),
+        },
+        environment: config.get<string>('server.environment'),
+        version: config.get<string>('server.version'),
+      },
+      auth: {
+        firebase: {
+          projectId: config.get<string>('auth.firebase.projectId'),
+        },
+      },
+      logger: {
+        enabled: config.get<boolean>('logger.enabled'),
+        level: config.get<number>('logger.level'),
+        middleware: config.get<boolean>('logger.middleware'),
+      },
+      database: {
+        postgres: {
+          host: config.get<string>('database.postgres.host'),
+          port: config.get<number>('database.postgres.port'),
+          user: config.get<string>('database.postgres.user'),
+          password: config.get<string>('database.postgres.password'),
+          database: config.get<string>('database.postgres.database'),
+          schema: config.get<string>('database.postgres.schema'),
+        },
+      },
+    }
+  }
+
+  private bindConfig(): void {
+    this.container.bind<Config>('Config').toConstantValue(this.config);
+    this.container.bind<DatabasePostgresConfig>('Config').toConstantValue(this.config.database.postgres).whenTargetNamed('Postgres');
+  }
+
   private bindUtils(): void {
     this.container.bind<Context>('Context').toConstantValue(this.context);
     this.container.bind<Logger>('Logger').toConstantValue(this.logger);
@@ -81,14 +122,18 @@ export class Application {
   }
 
   private async bindRepositories(): Promise<void> {
-    const postgresClient = new Client({
-      user: config.get<string>('database.postgres.user'),
-      password: config.get<string>('database.postgres.password'),
-      host: config.get<string>('database.postgres.host'),
-      port: config.get<number>('database.postgres.port'),
-      database: config.get<string>('database.postgres.database'),
+    const postgresPool = new Pool({
+      user: this.config.database.postgres.user,
+      password: this.config.database.postgres.password,
+      host: this.config.database.postgres.host,
+      port: this.config.database.postgres.port,
+      database: this.config.database.postgres.database,
     });
-    this.container.bind<Client>('PgClient').toConstantValue(postgresClient);
+
+    const postgresLayer = new PostgresLayer(this.logger, postgresPool, this.config.database.postgres);
+    await postgresLayer.initialize();
+
+    this.container.bind<PostgresLayer>('PostgresLayer').toConstantValue(postgresLayer);
     this.container.bind<DraftRepository>('Repository').to(PostgresDraftRepository).whenTargetNamed('Draft');
   }
 
@@ -101,7 +146,7 @@ export class Application {
     // TODO: conditional if firebase is activated
     firebaseAdmin.initializeApp({
       credential: firebaseAdmin.applicationDefault(),
-      projectId: config.get<string>('firebase.projectId'),
+      projectId: this.config.auth.firebase.projectId,
     });
     this.container.bind<AuthProvider>('Provider').to(FirebaseAuthProvider).whenTargetNamed('Auth');
   }
