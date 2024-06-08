@@ -31,6 +31,7 @@
     "mongodb": "^5.4.0",
     "on-finished": "^2.4.1",
     "on-headers": "^1.0.2",
+    "pg": "^8.12.0",
     "reflect-metadata": "^0.1.13",
     "uuid-mongodb": "^2.5.4"
   },
@@ -45,6 +46,7 @@
     "@types/jest": "^29.5.1",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^20.14.2",
+    "@types/pg": "^8.11.6",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
     "@typescript-eslint/parser": "^7.12.0",
     "cross-env": "^7.0.3",

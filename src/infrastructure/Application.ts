@@ -3,6 +3,7 @@ import * as http from 'http';
 import axios from 'axios';
 import { BindingScopeEnum, Container } from 'inversify';
 import * as firebaseAdmin from 'firebase-admin/app';
+import { Client } from 'pg';
 
 import Logger from '../domain/models/utils/Logger';
 import ConsoleLogger from './utils/ConsoleLogger';
@@ -14,11 +15,13 @@ import HttpClient from '../domain/models/utils/HttpClient';
 import AxiosHttpClient from './utils/AxiosHttpClient';
 
 import Server from './Server';
-import UserRepository from './repositories/UserRepository';
+import DraftRepository from './repositories/DraftRepository';
 import BcryptHash from './utils/BcryptHash';
 import Hash from '../domain/models/utils/Hash';
 import AuthProvider from './providers/auth/AuthProvider';
 import FirebaseAuthProvider from './providers/auth/FirebaseAuthProvider';
+import PostgresDraftRepository from './repositories/postgres/draft/PostgresDraftRepository';
+import PostgresBaseRepository from './repositories/postgres/PostgresBaseRepository';
 
 export class Application {
   private server: Server;
@@ -78,14 +81,15 @@ export class Application {
   }
 
   private async bindRepositories(): Promise<void> {
-    // TODO: config to switch
-    // const mongodbLayer = new MongoDbLayer({
-    //   ...config.get('database.mongodb'),
-    // }, this.logger);
-    // await mongodbLayer.initialize();
-    // this.container.bind<MongoDbLayer>('MongoDbLayer').toConstantValue(mongodbLayer);
-
-    // this.container.bind<UserRepository>('Repository').to(InMemoryUserRepository).whenTargetNamed('User');
+    const postgresClient = new Client({
+      user: config.get<string>('database.postgres.user'),
+      password: config.get<string>('database.postgres.password'),
+      host: config.get<string>('database.postgres.host'),
+      port: config.get<number>('database.postgres.port'),
+      database: config.get<string>('database.postgres.database'),
+    });
+    this.container.bind<Client>('PgClient').toConstantValue(postgresClient);
+    this.container.bind<DraftRepository>('Repository').to(PostgresDraftRepository).whenTargetNamed('Draft');
   }
 
   private bindServices(): void {

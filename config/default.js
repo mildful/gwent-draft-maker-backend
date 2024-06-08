@@ -16,9 +16,13 @@ module.exports = {
     middleware: process.env.LOGGER_MIDDLEWARE !== 'false',
   },
   database: {
-    mongodb: {
-      uri: process.env.MONGODB_URI || 'mongodb://root:example@mongo:27017/',
-      databaseName: process.env.MONGODB_DATABASE_NAME || 'wall-of-pixels',
+    posgres: {
+      user: process.env.POSTGRES_USER || 'postgres',
+      host: process.env.POSTGRES_HOST || 'db',
+      database: process.env.POSTGRES_DATABASE || 'gwent_draft_maker',
+      password: process.env.POSTGRES_PASSWORD || 'myPassword',
+      port: process.env.POSTGRES_PORT ? +process.env.POSTGRES_PORT : 5432,
+      schema: process.env.POSTGRES_SCHEMA || 'public',
     },
   },
   providers: {
