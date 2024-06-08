@@ -35,6 +35,16 @@ export default class PostgresDeckRepository implements DeckRepository {
     }
   }
 
+  public async getDecksByDraftId(draftId: number): Promise<Deck[]> {
+    try {
+      const result = await this.postgresLayer.pool.query(`SELECT * FROM ${DECKS_TABLE_NAME} WHERE draft_id = $1`, [draftId]);
+      return result.rows.map(row => PostgresDeckSerializer.toModel(row as DeckEntity));
+    } catch (error) {
+      this.logger.error(`[PostgresDeckRepository] [getDecksByDraftId] Error getting decks by draft id: "${draftId}"`);
+      throw error;
+    }
+  }
+
   private async updateExisting(deck: Deck): Promise<Deck> {
     try {
       const deckEntity = PostgresDeckSerializer.toEntity(deck);

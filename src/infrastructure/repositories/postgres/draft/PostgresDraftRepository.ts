@@ -1,4 +1,4 @@
-import { inject, injectable } from "inversify";
+import { inject, injectable, named } from "inversify";
 import Draft from "../../../../domain/models/Draft";
 import DraftRepository from "../../DraftRepository";
 import PostgresLayer from "../PostgresLayer";
@@ -7,12 +7,14 @@ import { DraftEntity } from "./PostgresDraftEntity";
 import PostgresDraftSerializer from "./PostgresDraftSerializer";
 import Logger from "../../../../domain/models/utils/Logger";
 import { ServerError } from "../../../../domain/shared/Errors";
+import DeckRepository from "../../DeckRepository";
 
 @injectable()
 export default class PostgresDraftRepository implements DraftRepository {
   constructor(
     @inject('Logger') private readonly logger: Logger,
     @inject('PostgresLayer') private readonly postgresLayer: PostgresLayer,
+    @inject('Repository') @named('Deck') private readonly deckRepository: DeckRepository,
   ) { }
 
   public async getAll(): Promise<Draft[]> {
@@ -35,11 +37,19 @@ export default class PostgresDraftRepository implements DraftRepository {
 
   public async findById(id: number): Promise<Draft | null> {
     try {
-      const result = await this.postgresLayer.pool.query(`SELECT * FROM ${DRAFTS_TABLE_NAME} WHERE id = $1`, [id]);
-      if (result.rows.length === 0) {
+      // get draft
+      const resultDraft = await this.postgresLayer.pool.query(`SELECT * FROM ${DRAFTS_TABLE_NAME} WHERE id = $1`, [id]);
+      if (resultDraft.rows.length === 0) {
         return null;
       }
-      return PostgresDraftSerializer.toModel(result.rows[0] as DraftEntity);
+      const draftEntity = resultDraft.rows[0] as DraftEntity;
+      const draft = PostgresDraftSerializer.toModel(draftEntity);
+
+      // get related decks
+      const relatedDecks = await this.deckRepository.getDecksByDraftId(draftEntity.id);
+
+      draft.addDecks(relatedDecks);
+      return draft;
     } catch (error) {
       this.logger.error(`[PostgresDraftRepository] [getById] Error getting draft by id: "${id}"`);
       throw error;

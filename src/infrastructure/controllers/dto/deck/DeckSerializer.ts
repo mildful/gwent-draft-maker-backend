@@ -12,8 +12,8 @@ export default abstract class DeckSerializer {
         { rel: 'select-parent-draft', method: 'GET', href: `/drafts/${model.parentDraftId}` },
         { condition: !!model.parentDraftId && !options.isPartOfCollection }
       )
-      .addLink(DraftListResource.link_listDrafts())
-      .addLink(DraftResource.link_createDraft())
+      .addLink(DraftListResource.link_listDrafts(), { condition: !options.isPartOfCollection })
+      .addLink(DraftResource.link_createDraft(), { condition: !options.isPartOfCollection })
       .serialize();
   }
 }

@@ -118,4 +118,8 @@ export default class Draft {
 
     this._state.decks.push(deck);
   }
+
+  public addDecks(decks: Deck[]): void {
+    decks.forEach(deck => this.addDeck(deck));
+  }
 }
