@@ -33,7 +33,7 @@ export class Validator {
     return value instanceof Date;
   }
 
-  public static isObject(value: unknown): value is {[k: string]: unknown} {
+  public static isObject(value: unknown): value is { [k: string]: unknown } {
     return !!(value && typeof value === 'object');
   }
 
@@ -51,6 +51,10 @@ export class Validator {
 
   public static isNullOrUndefined(data: unknown): boolean {
     return data == null;
+  }
+
+  public static isStringMaxLength(maxLength: number): (data: unknown) => boolean {
+    return (data: unknown) => this.isNonEmptyString(data) && data.length <= maxLength;
   }
 
   public static validate(value: boolean, message: string): void;

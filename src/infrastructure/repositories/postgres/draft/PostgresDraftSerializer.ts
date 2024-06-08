@@ -7,6 +7,7 @@ export abstract class PostgresDraftSerializer {
   public static toEntity(model: Draft): DraftEntity {
     return {
       id: model.id || null,
+      name: model.name || null,
       user_id: model.userId,
       initial_number_of_kegs: model.initialNumberOfKegs,
       remaining_kegs: model.remainingKegs,
@@ -27,6 +28,7 @@ export abstract class PostgresDraftSerializer {
     return new Draft({
       id: entity.id as number,
       userId: entity.user_id,
+      name: entity.name || undefined,
       initialNumberOfKegs: entity.initial_number_of_kegs,
       remainingKegs: entity.remaining_kegs,
       gameVersion: entity.game_version,

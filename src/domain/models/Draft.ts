@@ -68,7 +68,7 @@ export default class Draft {
       Validator.validate(params.inventory, Validator.isArray, `[Draft][constructor] params.inventory must be an array: ${params.inventory}`);
     }
     if (params.name) {
-      Validator.validate(params.name, Validator.isNonEmptyString, `[Draft][constructor] params.name must be a non-empty string: ${params.name}`);
+      Validator.validate(params.name, Validator.isStringMaxLength(50), `[Draft][constructor] params.name must be a non-empty string: ${params.name}`);
     }
     if (params.currentKeg) {
       Validator.validate(params.currentKeg, Keg.isValid, `[Draft][constructor] Invalid current keg: ${params.currentKeg}`);

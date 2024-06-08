@@ -1,5 +1,6 @@
 export interface DraftEntity {
   id: number | null;
+  name: string | null;
   user_id: string;
   initial_number_of_kegs: number;
   remaining_kegs: number;
