@@ -9,7 +9,7 @@ export default abstract class FactionSerializer {
     return new FactionResource(faction)
       .addLink(
         FactionResource.link_createDeckOfFaction({ draftId: draft.id as number, faction }),
-        { condition: !!draft.id }
+        { condition: !!draft.id && faction != Faction.NEUTRAL }
       )
       .getDtoWithLinks();
   }

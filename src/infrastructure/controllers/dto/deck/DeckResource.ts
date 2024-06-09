@@ -1,8 +1,5 @@
 import Deck from "../../../../domain/models/Deck";
-import Draft from "../../../../domain/models/Draft";
-import { isValidFaction } from "../../../../domain/models/Faction";
-import { Validator } from "../../../../domain/shared/Validator";
-import BaseResource, { Link } from "../BaseResource";
+import BaseResource from "../BaseResource";
 
 export interface DeckDto {
   name: string;
