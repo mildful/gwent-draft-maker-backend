@@ -1,4 +1,4 @@
-import { DeckInvalidCardError } from "../errors/DeckInvalidCardError";
+import { CannotAddCardToDeckError } from "../errors/CannotAddCardToDeckError";
 import { Validator } from "../shared/Validator";
 import Card from "./Card";
 import { ContentVersion } from "./ContentVersion";
@@ -68,18 +68,18 @@ export default class Deck {
 
   public addCard(card: Card): void {
     if (['Leader', 'Strategem'].includes(card.type)) {
-      throw new DeckInvalidCardError('Cannot add a leader or stratagem card to a deck', { card });
+      throw new CannotAddCardToDeckError('Cannot add a leader or stratagem card to a deck', { card });
     }
     if (card.color === 'Gold' && this._state.cards.filter(c => c.id === card.id).length >= 1) {
-      throw new DeckInvalidCardError('Cannot add more than 1 copy of a gold card', { card });
+      throw new CannotAddCardToDeckError('Cannot add more than 1 copy of a gold card', { card });
     }
 
     if (card.color === 'Bronze' && this._state.cards.filter(c => c.id === card.id).length >= 2) {
-      throw new DeckInvalidCardError('Cannot add more than 2 copies of a bronze card', { card });
+      throw new CannotAddCardToDeckError('Cannot add more than 2 copies of a bronze card', { card });
     }
 
     if (!card.factions().includes(this.faction)) {
-      throw new DeckInvalidCardError('Cannot add a card from a different faction', { card });
+      throw new CannotAddCardToDeckError('Cannot add a card from a different faction', { card });
     }
 
     this._state.cards.push(card);
@@ -87,14 +87,14 @@ export default class Deck {
 
   public updateLeader(leader: Card): void {
     if (leader.type !== 'Leader') {
-      throw new DeckInvalidCardError('The leader must be a leader card', { card: leader });
+      throw new CannotAddCardToDeckError('The leader must be a leader card', { card: leader });
     }
 
     this._state.leader = leader;
   }
   public updateStratagem(stratagem: Card): void {
     if (stratagem.type !== 'Stratagem') {
-      throw new DeckInvalidCardError('The stratagem must be a stratagem card', { card: stratagem });
+      throw new CannotAddCardToDeckError('The stratagem must be a stratagem card', { card: stratagem });
     }
 
     this._state.stratagem = stratagem;

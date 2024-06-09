@@ -2,6 +2,6 @@ import { ErrorCode, NotFoundError } from '../shared/Errors';
 
 export class DraftNotFoundError extends NotFoundError {
   constructor(data: { draftId: number }) {
-    super(`Draft not found.`, ErrorCode.DRAFT_NOT_FOUND, data); // TODO: gerer toutes les erreurs comme ca :)
+    super(`Draft not found.`, ErrorCode.DRAFT_NOT_FOUND, data);
   }
 }
