@@ -4,7 +4,7 @@ export interface Link {
   rel: string;
   href: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-  schema?: JsonSchema7Type; // TODO: only if POST or PUT or PATCH
+  schemaRef?: string; // TODO: only if POST or PUT or PATCH
 }
 
 export type GenerateLinkFn<T extends BaseResource<any>> = (resourceInstance: T) => Link | null;

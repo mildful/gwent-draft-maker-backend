@@ -22,6 +22,7 @@ const SCHEMAS: { [key: string]: ZodType } = {
   }),
 };
 
+// mandatory export as it is used to dynamically generate the schemas file
 export const JSON_SCHEMAS = Object.keys(SCHEMAS).map(key => zodToJsonSchema(SCHEMAS[key], key));
 
 export default class DraftResource extends BaseResource<DraftDto> {
@@ -50,7 +51,7 @@ export default class DraftResource extends BaseResource<DraftDto> {
       rel: 'create-draft',
       method: 'POST',
       href: '/drafts',
-      schema: zodToJsonSchema(SCHEMAS['create-draft'], 'create-draft'),
+      schemaRef: (zodToJsonSchema(SCHEMAS['create-draft'], 'create-draft') as any).$ref,
     };
   }
   public static validate_createDeck(data: any): data is {
