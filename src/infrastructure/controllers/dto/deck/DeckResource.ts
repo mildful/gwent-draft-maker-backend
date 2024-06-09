@@ -1,5 +1,5 @@
 import Deck from "../../../../domain/models/Deck";
-import BaseResource from "../BaseResource";
+import BaseResource, { Link } from "../BaseResource";
 
 export interface DeckDto {
   name: string;
@@ -11,11 +11,12 @@ export interface DeckDto {
 }
 
 export class DeckResource extends BaseResource<DeckDto> {
-  private _parentDraftId: number;
+  private _model: Deck;
 
   constructor(deck: Deck) {
     super();
 
+    this._model = deck;
     this._dto = {
       name: deck.name || 'no_name',
       cards: deck.cards,
@@ -24,6 +25,17 @@ export class DeckResource extends BaseResource<DeckDto> {
       leader: deck.leader,
       stratagem: deck.stratagem,
     };
-    this._parentDraftId = deck.parentDraftId;
+  }
+
+  public link_self(): Link | null {
+    return Boolean(this._model.id)
+      ? { rel: 'self', method: 'GET', href: `/decks/${this._model.id}` }
+      : null;
+  }
+
+  public link_selectParentDraft(): Link | null {
+    return Boolean(this._model.parentDraftId)
+      ? { rel: 'select-parent-draft', method: 'GET', href: `/drafts/${this._model.parentDraftId}` }
+      : null;
   }
 }

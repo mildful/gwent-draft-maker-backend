@@ -40,7 +40,6 @@ export default class Deck {
 
   constructor(params: DeckCreateParams) {
     Validator.validate(params, Validator.isObject, `[Deck][constructor] params must be an object: ${params}`);
-    Validator.validate(params.name, Validator.isNonEmptyString, `[Deck][constructor] params.name must be a non-empty string: ${params.name}`);
     Validator.validate(params.contentVersion, Validator.isNonEmptyString, `[Deck][constructor] params.contentVersion must be a non-empty string: ${params.contentVersion}`);
     Validator.validate(params.faction, Validator.isNonEmptyString, `[Deck][constructor] params.faction must be a non-empty string: ${params.faction}`);
     Validator.validate(params.parentDraftId, Validator.isNumber, `[Deck][constructor] Invalid parent draft id: ${params.parentDraftId}`);

@@ -1,5 +1,6 @@
+import { ZodType, z } from "zod";
+import zodToJsonSchema from "zod-to-json-schema";
 import Draft from "../../../../domain/models/Draft";
-import { Validator } from "../../../../domain/shared/Validator";
 import BaseResource, { DtoWithLinks, Link } from "../BaseResource";
 import { DeckDto } from "../deck/DeckResource";
 import DeckSerializer from "../deck/DeckSerializer";
@@ -13,10 +14,23 @@ export interface DraftDto {
   decks: DtoWithLinks<DeckDto>[];
 }
 
+const SCHEMAS: { [key: string]: ZodType } = {
+  'create-draft': z.object({
+    initialNumberOfKegs: z.number(),
+    availableFactions: z.array(z.string()),
+    name: z.string().optional()
+  }),
+};
+
+export const JSON_SCHEMAS = Object.keys(SCHEMAS).map(key => zodToJsonSchema(SCHEMAS[key], key));
+
 export default class DraftResource extends BaseResource<DraftDto> {
+  private _model: Draft;
+
   constructor(model: Draft) {
     super();
 
+    this._model = model;
     this._dto = {
       totalKegs: model.initialNumberOfKegs,
       remainingKegs: model.remainingKegs,
@@ -25,33 +39,26 @@ export default class DraftResource extends BaseResource<DraftDto> {
     };
   }
 
+  public link_self(options?: { condition: boolean }): Link | null {
+    return Boolean(this._model.id) && Boolean(options?.condition)
+      ? { rel: 'self', method: 'GET', href: `/drafts/${this._model.id}` }
+      : null;
+  }
+
   public static link_createDraft(): Link {
     return {
       rel: 'create-draft',
       method: 'POST',
       href: '/drafts',
-      schema: {
-        type: "object",
-        properties: {
-          initialNumberOfKegs: { type: "number" },
-          availableFactions: { type: "array", items: { type: "string" } },
-          name: { type: "string" },
-        },
-        required: ["initialNumberOfKegs", "availableFactions"]
-      }
+      schema: zodToJsonSchema(SCHEMAS['create-draft'], 'create-draft'),
     };
   }
-  public static validate_createDraft(data: any): data is {
+  public static validate_createDeck(data: any): data is {
     initialNumberOfKegs: number,
     availableFactions: string[],
     name?: string
   } {
-    Validator.validate(data, Validator.isObject, `[DraftResource][validate_create] data must be an object`);
-    Validator.validate(data?.initialNumberOfKegs, Validator.isNumber, `[DraftResource][validate_create] data.initialNumberOfKegs must be a number`);
-    Validator.validate(data?.availableFactions, Validator.isArray, `[DraftResource][validate_create] data.availableFactions must be an array`);
-    if (data?.name) {
-      Validator.validate(data.name, Validator.isString, `[DraftResource][validate_create] data.name must be a string`);
-    }
+    SCHEMAS['create-draft'].parse(data);
     return true;
   }
 }

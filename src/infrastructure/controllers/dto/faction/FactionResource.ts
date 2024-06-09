@@ -1,3 +1,4 @@
+import Draft from "../../../../domain/models/Draft";
 import Faction from "../../../../domain/models/Faction";
 import BaseResource, { Link } from "../BaseResource";
 
@@ -6,19 +7,22 @@ export interface FactionDto {
 }
 
 export default class FactionResource extends BaseResource<FactionDto> {
+  private _faction: Faction;
+
   constructor(faction: Faction) {
     super();
 
+    this._faction = faction;
     this._dto = {
       faction,
     };
   }
 
-  public static link_createDeckInDraftFromFaction(options: { draftId: number, faction: string }): Link {
-    return {
+  public link_createDeckInDraftFromFaction(draftId: number): Link | null {
+    return this._faction != Faction.NEUTRAL ? {
       rel: 'create-deck-from-faction',
       method: 'POST',
-      href: `/drafts/${options.draftId}/decks?faction=${options.faction}`,
-    };
+      href: `/drafts/${draftId}/decks?faction=${this._faction}`,
+    } : null;
   }
 }

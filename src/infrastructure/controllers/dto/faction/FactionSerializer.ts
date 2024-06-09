@@ -7,10 +7,7 @@ import { FactionDto } from './FactionResource';
 export default abstract class FactionSerializer {
   public static toDto(faction: Faction, draft: Draft): DtoWithLinks<FactionDto> {
     return new FactionResource(faction)
-      .addLink(
-        FactionResource.link_createDeckInDraftFromFaction({ draftId: draft.id as number, faction }),
-        { condition: !!draft.id && faction != Faction.NEUTRAL }
-      )
+      .addLink(r => r.link_createDeckInDraftFromFaction(draft.id as number), { condition: typeof draft.id === 'number' })
       .getDtoWithLinks();
   }
 }

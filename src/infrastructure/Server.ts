@@ -17,6 +17,8 @@ import { LogMiddleware } from './middlewares/LogMiddleware';
 // TODO: automatically import based on file system
 import './controllers/DraftController';
 import './controllers/DeckController';
+import { SchemaFileGenerator } from './controllers/dto/SchemaFileGenerator';
+import path = require('path');
 
 export default class Server {
   private readonly logger: Logger;
@@ -35,6 +37,9 @@ export default class Server {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async start(): Promise<http.Server> {
+    // generate schema file
+    await SchemaFileGenerator.generateSchemaFile();
+
     if (this.rawServer) {
       return this.rawServer;
     }
@@ -93,6 +98,7 @@ export default class Server {
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
     app.use(cookieParser());
+    app.use(express.static(path.join(__dirname, '../../public')));
 
     const contextMiddleware = new ContextMiddleware(this.context);
     app.use(contextMiddleware.initContext.bind(contextMiddleware));

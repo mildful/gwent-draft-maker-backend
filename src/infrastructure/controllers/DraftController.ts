@@ -12,6 +12,7 @@ import DraftResource, { DraftDto } from "./dto/draft/DraftResource";
 import DraftSerializer from "./dto/draft/DraftSerializer";
 import { DraftListDto } from "./dto/draftList/DraftListResource";
 import DraftListSerializer from "./dto/draftList/DraftListSerializer";
+import { ValidationError } from "../../domain/shared/Errors";
 
 @controller('/drafts')
 export class DraftController {
@@ -32,8 +33,8 @@ export class DraftController {
     @requestBody() body: unknown,
   ): Promise<DtoWithLinks<DraftDto>> {
     this.logger.info('[DraftController][createNewDraft] Validating body based on schema...');
-    if (!DraftResource.validate_createDraft(body)) {
-      throw new Error('Invalid body');
+    if (!DraftResource.validate_createDeck(body)) {
+      throw new ValidationError('Invalid', undefined, { body });
     }
 
     const { name, initialNumberOfKegs, availableFactions } = body;

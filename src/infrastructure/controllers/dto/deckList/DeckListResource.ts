@@ -11,6 +11,6 @@ export class DeckListResource extends BaseResource<DeckListDto> {
   constructor(decks: Deck[]) {
     super();
 
-    this._dto = { decks: decks.map(deck => DeckSerializer.toDto(deck)) };
+    this._dto = { decks: decks.map(deck => DeckSerializer.toDto(deck, { isPartOfCollection: true })) };
   }
 }
