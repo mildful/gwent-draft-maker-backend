@@ -1,11 +1,11 @@
 import { inject, named } from "inversify";
-import { controller, httpGet, httpPost, requestBody, requestParam } from "inversify-express-utils";
+import { controller, httpGet, httpPost, queryParam, requestBody, requestParam } from "inversify-express-utils";
 import { DtoWithLinks } from "./dto/BaseResource";
 import DraftResource, { DraftDto } from "./dto/draft/DraftResource";
 import DraftSerializer from "./dto/draft/DraftSerializer";
 import DraftListSerializer from "./dto/draftList/DraftListSerializer";
 import { DraftListDto } from "./dto/draftList/DraftListResource";
-import Faction from "../../domain/models/Faction";
+import Faction, { isValidFaction } from "../../domain/models/Faction";
 import DraftService from "../../application/services/DraftService";
 import Logger from "../../domain/models/utils/Logger";
 import { Validator } from "../../domain/shared/Validator";
@@ -55,27 +55,23 @@ export class DraftController {
   ): Promise<DtoWithLinks<DraftDto>> {
     const numberId = Number(id);
     Validator.validate(numberId, Validator.isNumber, `Invalid id: ${numberId}`);
+
     const draft = await this.draftService.getDraftById(numberId);
+
     return DraftSerializer.toDto(draft);
   }
 
   @httpPost('/:draftId/decks')
-  public async createNewDeck(
+  public async createNewDeckOfFaction(
     @requestParam('draftId') draftId: string,
-    @requestBody() body: unknown,
+    @queryParam('faction') faction: string,
   ): Promise<DtoWithLinks<DeckDto>> {
     const parentDraftId = Number(draftId);
     Validator.validate(parentDraftId, Validator.isNumber, `Invalid draftId: ${parentDraftId}`);
-
-    this.logger.info('[DeckController][createNewDeck] Validating body based on schema...');
-    if (!DeckResource.validate_createDeck(body)) {
-      throw new Error('Invalid body');
-    }
-
-    const { faction, secondaryFaction, name } = body;
+    Validator.validate(faction, isValidFaction, `Invalid faction: ${faction}`);
 
     const deck = await this.deckService.createNewDeck({
-      name,
+      name: "new deck",
       faction: faction as Faction,
       parentDraftId,
       // TODO: placeholder

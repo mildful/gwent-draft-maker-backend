@@ -1,6 +1,3 @@
-- ne pas pouvoir creer de deck qui ne partage pas de faction avec le draft
-- retirer le secondary faction des decks
-
 ## GET /drafts
 ```js
 {
@@ -83,7 +80,7 @@
   ]
 }
 ```
-## POST /drafts/123/decks
+## POST /drafts/123/decks?faction=MO
 ```js
 {
   id: 1,

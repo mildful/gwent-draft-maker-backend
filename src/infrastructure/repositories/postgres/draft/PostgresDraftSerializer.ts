@@ -1,9 +1,7 @@
-import Deck from "../../../../domain/models/Deck";
 import Draft from "../../../../domain/models/Draft";
 import Faction, { isValidFaction } from "../../../../domain/models/Faction";
 import { ValidationError } from "../../../../domain/shared/Errors";
 import BaseSerializer from "../BaseSerializer";
-import PostgresDeckSerializer from "../deck/PostgresDeckSerializer";
 import { DraftEntity } from "./PostgresDraftEntity";
 
 const PostgresDraftSerializer: BaseSerializer<Draft, DraftEntity> = {

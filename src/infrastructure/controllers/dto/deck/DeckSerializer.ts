@@ -14,6 +14,6 @@ export default abstract class DeckSerializer {
       )
       .addLink(DraftListResource.link_listDrafts(), { condition: !options.isPartOfCollection })
       .addLink(DraftResource.link_createDraft(), { condition: !options.isPartOfCollection })
-      .serialize();
+      .getDtoWithLinks();
   }
 }

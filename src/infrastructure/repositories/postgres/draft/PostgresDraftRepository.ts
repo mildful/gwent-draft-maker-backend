@@ -20,9 +20,16 @@ export default class PostgresDraftRepository implements DraftRepository {
   public async getAll(): Promise<Draft[]> {
     try {
       const result = await this.postgresLayer.pool.query(`SELECT * FROM ${DRAFTS_TABLE_NAME}`);
-      return result.rows.map((row) => PostgresDraftSerializer.toModel(row as DraftEntity));
+      const drafts = result.rows.map((row) => PostgresDraftSerializer.toModel(row as DraftEntity))
+
+      for (let draft of drafts) {
+        const decks = await this.deckRepository.getDecksByDraftId(draft.id as number);
+        draft.addDecks(decks);
+      }
+
+      return drafts;
     } catch (err) {
-      this.logger.error(`[PostgresDraftRepository] [getAll] Error getting drafts`);
+      this.logger.error(`[PostgresDraftRepository][getAll] Error getting drafts`);
       throw new ServerError('Unexpected error');
     }
   }
@@ -51,7 +58,7 @@ export default class PostgresDraftRepository implements DraftRepository {
       draft.addDecks(relatedDecks);
       return draft;
     } catch (error) {
-      this.logger.error(`[PostgresDraftRepository] [getById] Error getting draft by id: "${id}"`);
+      this.logger.error(`[PostgresDraftRepository][getById] Error getting draft by id: "${id}"`);
       throw error;
     }
   }
@@ -73,7 +80,7 @@ export default class PostgresDraftRepository implements DraftRepository {
       );
       return draft;
     } catch (error) {
-      this.logger.error(`[PostgresDraftRepository] [updateExisting] Error updating draft`);
+      this.logger.error(`[PostgresDraftRepository][updateExisting] Error updating draft`);
       throw error;
     }
   }

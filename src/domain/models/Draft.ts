@@ -112,8 +112,8 @@ export default class Draft {
   }
 
   public addDeck(deck: Deck): void {
-    if (this.availableFactions.includes(deck.faction)) {
-      throw new CannotAddDeckToDraftError('Deck contains invalid faction(s)', { draft: this });
+    if (!this.availableFactions.includes(deck.faction)) {
+      throw new CannotAddDeckToDraftError('Deck contains invalid faction(s)', { deck, draft: this });
     }
 
     this._state.decks.push(deck);

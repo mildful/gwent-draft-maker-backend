@@ -14,6 +14,8 @@ export interface DeckDto {
 }
 
 export class DeckResource extends BaseResource<DeckDto> {
+  private _parentDraftId: number;
+
   constructor(deck: Deck) {
     super();
 
@@ -25,37 +27,6 @@ export class DeckResource extends BaseResource<DeckDto> {
       leader: deck.leader,
       stratagem: deck.stratagem,
     };
-  }
-
-  public static link_createDeck(options: { parentDraftId: number }): Link {
-    return {
-      rel: 'create-deck',
-      method: 'POST',
-      href: `/drafts/${options.parentDraftId}/decks`,
-      schema: {
-        type: "object",
-        properties: {
-          faction: { type: "string" },
-          name: { type: "string" },
-          secondaryFaction: { type: "string" },
-        },
-        required: ["faction"]
-      }
-    };
-  }
-  public static validate_createDeck(data: any): data is {
-    faction: string,
-    name?: string,
-    secondaryFaction?: string,
-  } {
-    Validator.validate(data, Validator.isObject, `[DeckResource][validate_createDeck] data must be an object`);
-    Validator.validate(data.faction, isValidFaction, `[DeckResource][validate_createDeck] data.faction must be a string`);
-    if (data.name) {
-      Validator.validate(data.name, Validator.isString, `[DeckResource][validate_createDeck] data.name must be a string`);
-    }
-    if (data.secondaryFaction) {
-      Validator.validate(data.secondaryFaction, isValidFaction, `[DeckResource][validate_createDeck] data.secondaryFaction must be a string`);
-    }
-    return true;
+    this._parentDraftId = deck.parentDraftId;
   }
 }

@@ -3,10 +3,13 @@ import { Validator } from "../../../../domain/shared/Validator";
 import BaseResource, { DtoWithLinks, Link } from "../BaseResource";
 import { DeckDto } from "../deck/DeckResource";
 import DeckSerializer from "../deck/DeckSerializer";
+import { FactionDto } from "../faction/FactionResource";
+import FactionSerializer from "../faction/FactionSerializer";
 
 export interface DraftDto {
   totalKegs: number;
   remainingKegs: number;
+  availableFactions: DtoWithLinks<FactionDto>[];
   decks: DtoWithLinks<DeckDto>[];
 }
 
@@ -18,6 +21,7 @@ export default class DraftResource extends BaseResource<DraftDto> {
       totalKegs: model.initialNumberOfKegs,
       remainingKegs: model.remainingKegs,
       decks: model.decks.map(deck => DeckSerializer.toDto(deck, { isPartOfCollection: true })),
+      availableFactions: model.availableFactions.map(f => FactionSerializer.toDto(f, model)),
     };
   }
 
@@ -28,7 +32,6 @@ export default class DraftResource extends BaseResource<DraftDto> {
       href: '/drafts',
       schema: {
         type: "object",
-        // TODO: should match parameters in draft controller
         properties: {
           initialNumberOfKegs: { type: "number" },
           availableFactions: { type: "array", items: { type: "string" } },

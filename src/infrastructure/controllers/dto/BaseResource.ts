@@ -32,7 +32,7 @@ export default abstract class BaseResource<T> {
   private _links: Link[] = [];
   protected _dto: T;
 
-  addLink(link: Link, options?: { condition: boolean }): this {
+  public addLink(link: Link, options?: { condition: boolean }): this {
     if (options?.condition === false) {
       return this;
     }
@@ -41,7 +41,7 @@ export default abstract class BaseResource<T> {
     return this;
   }
 
-  serialize(): DtoWithLinks<T> {
+  public getDtoWithLinks(): DtoWithLinks<T> {
     return {
       ...this._dto,
       _links: this._links,

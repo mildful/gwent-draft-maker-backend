@@ -32,26 +32,26 @@ export class DomainError extends Error {
 }
 
 export class ValidationError extends DomainError {
-  constructor(message?: string, code?: ErrorCode) {
-    super(message, code ?? ErrorCode.GENERIC_VALIDATION);
+  constructor(message?: string, code?: ErrorCode, data?: unknown) {
+    super(message, code ?? ErrorCode.GENERIC_VALIDATION, data);
   }
 }
 
 export class ForbiddenError extends DomainError {
-  constructor(message?: string, code?: ErrorCode) {
-    super(message, code ?? ErrorCode.GENERIC_FORBIDDEN);
+  constructor(message?: string, code?: ErrorCode, data?: unknown) {
+    super(message, code ?? ErrorCode.GENERIC_FORBIDDEN, data);
   }
 }
 
 export class ConflictError extends DomainError {
-  constructor(message?: string, code?: ErrorCode) {
-    super(message, code ?? ErrorCode.GENERIC_CONFLICT);
+  constructor(message?: string, code?: ErrorCode, data?: unknown) {
+    super(message, code ?? ErrorCode.GENERIC_CONFLICT, data);
   }
 }
 
 export class UnauthorizedError extends DomainError {
-  constructor(message?: string, code?: ErrorCode) {
-    super(message, code ?? ErrorCode.GENERIC_UNAUTHORIZED);
+  constructor(message?: string, code?: ErrorCode, data?: unknown) {
+    super(message, code ?? ErrorCode.GENERIC_UNAUTHORIZED, data);
   }
 }
 
@@ -62,8 +62,8 @@ export class NotFoundError extends DomainError {
 }
 
 export class ServerError extends DomainError {
-  constructor(message?: string, code?: ErrorCode) {
-    super(message, code ?? ErrorCode.GENERIC_SERVER);
+  constructor(message?: string, code?: ErrorCode, data?: unknown) {
+    super(message, code ?? ErrorCode.GENERIC_SERVER, data);
   }
 }
 

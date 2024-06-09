@@ -8,6 +8,6 @@ export default abstract class DraftListSerializer {
     return new DraftListResource(models)
       .addLink({ rel: 'list-drafts', method: 'GET', href: '/drafts' })
       .addLink(DraftResource.link_createDraft())
-      .serialize();
+      .getDtoWithLinks();
   }
 }
