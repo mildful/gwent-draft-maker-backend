@@ -1,32 +1,32 @@
-import * as config from 'config';
-import * as http from 'http';
 import axios from 'axios';
-import { BindingScopeEnum, Container } from 'inversify';
+import * as config from 'config';
 import * as firebaseAdmin from 'firebase-admin/app';
+import * as http from 'http';
+import { BindingScopeEnum, Container } from 'inversify';
 import { Pool } from 'pg';
 
-import Logger from '../domain/models/utils/Logger';
-import ConsoleLogger from './utils/ConsoleLogger';
-import Context from '../domain/models/utils/Context';
-import ExecutionContext from './utils/ExecutionContext';
 import Clock from '../domain/models/utils/Clock';
-import SystemClock from './utils/SystemClock';
+import Context from '../domain/models/utils/Context';
 import HttpClient from '../domain/models/utils/HttpClient';
+import Logger from '../domain/models/utils/Logger';
 import AxiosHttpClient from './utils/AxiosHttpClient';
+import ConsoleLogger from './utils/ConsoleLogger';
+import ExecutionContext from './utils/ExecutionContext';
+import SystemClock from './utils/SystemClock';
 
-import Server from './Server';
-import DraftRepository from './repositories/DraftRepository';
-import BcryptHash from './utils/BcryptHash';
+import DeckService from '../application/services/DeckService';
+import DraftService from '../application/services/DraftService';
 import Hash from '../domain/models/utils/Hash';
+import Config, { DatabasePostgresConfig } from './Config';
+import Server from './Server';
 import AuthProvider from './providers/auth/AuthProvider';
 import FirebaseAuthProvider from './providers/auth/FirebaseAuthProvider';
-import PostgresDraftRepository from './repositories/postgres/draft/PostgresDraftRepository';
-import Config, { DatabaseConfig, DatabasePostgresConfig } from './Config';
-import PostgresLayer from './repositories/postgres/PostgresLayer';
-import DraftService from '../application/services/DraftService';
-import DeckService from '../application/services/DeckService';
 import DeckRepository from './repositories/DeckRepository';
+import DraftRepository from './repositories/DraftRepository';
+import PostgresLayer from './repositories/postgres/PostgresLayer';
 import PostgresDeckRepository from './repositories/postgres/deck/PostgresDeckRepository';
+import PostgresDraftRepository from './repositories/postgres/draft/PostgresDraftRepository';
+import BcryptHash from './utils/BcryptHash';
 
 export class Application {
   public readonly container: Container;

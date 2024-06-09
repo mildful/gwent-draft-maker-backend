@@ -1,6 +1,4 @@
-import Draft from "../../../../domain/models/Draft";
 import Faction from "../../../../domain/models/Faction";
-import { Validator } from "../../../../domain/shared/Validator";
 import BaseResource, { Link } from "../BaseResource";
 
 export interface FactionDto {

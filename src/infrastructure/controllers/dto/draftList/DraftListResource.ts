@@ -1,6 +1,6 @@
 import Draft from "../../../../domain/models/Draft";
 import BaseResource, { DtoWithLinks, Link } from "../BaseResource";
-import DraftResource, { DraftDto } from "../draft/DraftResource";
+import { DraftDto } from "../draft/DraftResource";
 import DraftSerializer from "../draft/DraftSerializer";
 
 export interface DraftListDto {

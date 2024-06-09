@@ -1,5 +1,3 @@
-import { Validator } from "../shared/Validator";
-
 export enum Faction {
   NEUTRAL = 'NEUTRAL',
   NR = 'NR',

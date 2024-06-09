@@ -1,6 +1,5 @@
 import Draft from '../../../../domain/models/Draft';
 import { DtoWithLinks } from '../BaseResource';
-import { DeckResource } from '../deck/DeckResource';
 import { DraftListResource } from '../draftList/DraftListResource';
 import DraftResource, { DraftDto } from './DraftResource';
 

@@ -1,5 +1,5 @@
 import { inject, injectable, named } from "inversify";
-import Deck, { DeckCreateParams } from "../../domain/models/Deck";
+import Deck from "../../domain/models/Deck";
 import { DeckNotFoundError } from "../../domain/errors/DeckNotFoundError";
 import DeckRepository from "../../infrastructure/repositories/DeckRepository";
 import Faction from "../../domain/models/Faction";

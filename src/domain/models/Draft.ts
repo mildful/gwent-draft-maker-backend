@@ -6,7 +6,6 @@ import Card from "./Card";
 import Deck from "./Deck";
 import Faction, { isValidFactionArray } from "./Faction";
 import Keg from "./Keg";
-import { Id } from "./utils/Id";
 
 export interface DraftCreateParams {
   userId: string;

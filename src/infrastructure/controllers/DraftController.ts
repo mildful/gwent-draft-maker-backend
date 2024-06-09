@@ -1,17 +1,17 @@
 import { inject, named } from "inversify";
 import { controller, httpGet, httpPost, queryParam, requestBody, requestParam } from "inversify-express-utils";
-import { DtoWithLinks } from "./dto/BaseResource";
-import DraftResource, { DraftDto } from "./dto/draft/DraftResource";
-import DraftSerializer from "./dto/draft/DraftSerializer";
-import DraftListSerializer from "./dto/draftList/DraftListSerializer";
-import { DraftListDto } from "./dto/draftList/DraftListResource";
-import Faction, { isValidFaction } from "../../domain/models/Faction";
+import DeckService from "../../application/services/DeckService";
 import DraftService from "../../application/services/DraftService";
+import Faction, { isValidFaction } from "../../domain/models/Faction";
 import Logger from "../../domain/models/utils/Logger";
 import { Validator } from "../../domain/shared/Validator";
-import { DeckDto, DeckResource } from "./dto/deck/DeckResource";
-import DeckService from "../../application/services/DeckService";
+import { DtoWithLinks } from "./dto/BaseResource";
+import { DeckDto } from "./dto/deck/DeckResource";
 import DeckSerializer from "./dto/deck/DeckSerializer";
+import DraftResource, { DraftDto } from "./dto/draft/DraftResource";
+import DraftSerializer from "./dto/draft/DraftSerializer";
+import { DraftListDto } from "./dto/draftList/DraftListResource";
+import DraftListSerializer from "./dto/draftList/DraftListSerializer";
 
 @controller('/drafts')
 export class DraftController {
