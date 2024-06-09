@@ -2,6 +2,7 @@ import { inject, injectable, named } from "inversify";
 import Deck, { DeckCreateParams } from "../../domain/models/Deck";
 import { DeckNotFoundError } from "../../domain/errors/DeckNotFoundError";
 import DeckRepository from "../../infrastructure/repositories/DeckRepository";
+import Faction from "../../domain/models/Faction";
 
 @injectable()
 export default class DeckService {
@@ -9,8 +10,21 @@ export default class DeckService {
     @inject('Repository') @named('Deck') private readonly deckRepository: DeckRepository,
   ) { }
 
-  public async createNewDeck(deckParams: DeckCreateParams): Promise<Deck> {
-    const newDeck = new Deck(deckParams);
+  public async createDeckInDraftFromFaction(
+    draftId: number,
+    faction: Faction,
+    name?: string,
+  ): Promise<Deck> {
+    const newDeck = new Deck({
+      parentDraftId: draftId,
+      faction,
+      name,
+      // TODO: placeholder
+      contentVersion: 'v1',
+      leader: {} as any,
+      stratagem: {} as any,
+    });
+
     const insertedDeck = await this.deckRepository.save(newDeck);
     return insertedDeck;
   }

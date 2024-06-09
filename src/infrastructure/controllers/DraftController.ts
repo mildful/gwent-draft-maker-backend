@@ -62,7 +62,7 @@ export class DraftController {
   }
 
   @httpPost('/:draftId/decks')
-  public async createNewDeckOfFaction(
+  public async createNewDeckFromFaction(
     @requestParam('draftId') draftId: string,
     @queryParam('faction') faction: string,
   ): Promise<DtoWithLinks<DeckDto>> {
@@ -70,15 +70,7 @@ export class DraftController {
     Validator.validate(parentDraftId, Validator.isNumber, `Invalid draftId: ${parentDraftId}`);
     Validator.validate(faction, isValidFaction, `Invalid faction: ${faction}`);
 
-    const deck = await this.deckService.createNewDeck({
-      name: "new deck",
-      faction: faction as Faction,
-      parentDraftId,
-      // TODO: placeholder
-      contentVersion: 'v1',
-      leader: {} as any,
-      stratagem: {} as any,
-    });
+    const deck = await this.deckService.createDeckInDraftFromFaction(parentDraftId, faction as Faction);
 
     return DeckSerializer.toDto(deck);
   }

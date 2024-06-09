@@ -16,9 +16,9 @@ export default class FactionResource extends BaseResource<FactionDto> {
     };
   }
 
-  public static link_createDeckOfFaction(options: { draftId: number, faction: string }): Link {
+  public static link_createDeckInDraftFromFaction(options: { draftId: number, faction: string }): Link {
     return {
-      rel: 'create-deck',
+      rel: 'create-deck-from-faction',
       method: 'POST',
       href: `/drafts/${options.draftId}/decks?faction=${options.faction}`,
     };
