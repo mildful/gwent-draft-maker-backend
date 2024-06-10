@@ -1,5 +1,4 @@
-import { ZodType } from "zod";
-import zodToJsonSchema, { JsonSchema7Type } from "zod-to-json-schema";
+import { JsonSchema7Type } from "zod-to-json-schema";
 
 export interface Link {
   rel: string;
