@@ -1,8 +1,8 @@
 import Deck from '../../../../domain/models/Deck';
 import { DtoWithLinks } from '../BaseResource';
 import DraftResource from '../draft/DraftResource';
-import { DraftListResource } from '../draftList/DraftListResource';
-import { DeckDto, DeckResource } from './DeckResource';
+import DraftListResource from '../draftList/DraftListResource';
+import DeckResource, { DeckDto } from './DeckResource';
 
 export default abstract class DeckSerializer {
   public static toDto(model: Deck, options = { isPartOfCollection: false }): DtoWithLinks<DeckDto> {

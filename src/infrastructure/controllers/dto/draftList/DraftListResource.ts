@@ -7,7 +7,7 @@ export interface DraftListDto {
   drafts: DtoWithLinks<DraftDto>[];
 }
 
-export class DraftListResource extends BaseResource<DraftListDto> {
+export default class DraftListResource extends BaseResource<DraftListDto> {
   constructor(drafts: Draft[]) {
     super();
 

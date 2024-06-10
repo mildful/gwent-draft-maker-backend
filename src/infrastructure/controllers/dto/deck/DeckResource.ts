@@ -10,7 +10,7 @@ export interface DeckDto {
   stratagem: any; // TODO: cardDto in here
 }
 
-export class DeckResource extends BaseResource<DeckDto> {
+export default class DeckResource extends BaseResource<DeckDto> {
   private _model: Deck;
 
   constructor(deck: Deck) {

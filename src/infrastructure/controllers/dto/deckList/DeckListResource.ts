@@ -7,7 +7,7 @@ export interface DeckListDto {
   decks: DtoWithLinks<DeckDto>[];
 }
 
-export class DeckListResource extends BaseResource<DeckListDto> {
+export default class DeckListResource extends BaseResource<DeckListDto> {
   constructor(decks: Deck[]) {
     super();
 

@@ -1,5 +1,5 @@
 import { ZodType, z } from "zod";
-import zodToJsonSchema from "zod-to-json-schema";
+import zodToJsonSchema, { JsonSchema7Type } from "zod-to-json-schema";
 import Draft from "../../../../domain/models/Draft";
 import BaseResource, { DtoWithLinks, Link } from "../BaseResource";
 import { DeckDto } from "../deck/DeckResource";
@@ -14,18 +14,18 @@ export interface DraftDto {
   decks: DtoWithLinks<DeckDto>[];
 }
 
-const SCHEMAS: { [key: string]: ZodType } = {
-  'create-draft': z.object({
-    initialNumberOfKegs: z.number(),
-    availableFactions: z.array(z.string()),
-    name: z.string().optional()
-  }),
-};
-
-// mandatory export as it is used to dynamically generate the schemas file
-export const JSON_SCHEMAS = Object.keys(SCHEMAS).map(key => zodToJsonSchema(SCHEMAS[key], key));
-
 export default class DraftResource extends BaseResource<DraftDto> {
+  public static schemas: { [key: string]: ZodType } = {
+    'create-draft': z.object({
+      initialNumberOfKegs: z.number(),
+      availableFactions: z.array(z.string()),
+      name: z.string().optional()
+    }),
+  };
+  public static getJsonSchemas(): JsonSchema7Type[] {
+    return Object.keys(DraftResource.schemas).map(key => zodToJsonSchema(DraftResource.schemas[key], key));
+  }
+
   private _model: Draft;
 
   constructor(model: Draft) {
@@ -51,7 +51,7 @@ export default class DraftResource extends BaseResource<DraftDto> {
       rel: 'create-draft',
       method: 'POST',
       href: '/drafts',
-      schemaRef: (zodToJsonSchema(SCHEMAS['create-draft'], 'create-draft') as any).$ref,
+      schemaRef: (zodToJsonSchema(DraftResource.schemas['create-draft'], 'create-draft') as any).$ref,
     };
   }
   public static validate_createDeck(data: any): data is {
@@ -59,7 +59,7 @@ export default class DraftResource extends BaseResource<DraftDto> {
     availableFactions: string[],
     name?: string
   } {
-    SCHEMAS['create-draft'].parse(data);
+    DraftResource.schemas['create-draft'].parse(data);
     return true;
   }
 }

@@ -1,6 +1,6 @@
 import Draft from '../../../../domain/models/Draft';
 import { DtoWithLinks } from '../BaseResource';
-import { DraftListResource } from '../draftList/DraftListResource';
+import DraftListResource from '../draftList/DraftListResource';
 import DraftResource, { DraftDto } from './DraftResource';
 
 export default abstract class DraftSerializer {

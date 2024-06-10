@@ -1,7 +1,7 @@
 import Draft from '../../../../domain/models/Draft';
 import { DtoWithLinks } from '../BaseResource';
 import DraftResource from '../draft/DraftResource';
-import { DraftListDto, DraftListResource } from './DraftListResource';
+import DraftListResource, { DraftListDto } from './DraftListResource';
 
 export default abstract class DraftListSerializer {
   public static toDto(models: Draft[]): DtoWithLinks<DraftListDto> {

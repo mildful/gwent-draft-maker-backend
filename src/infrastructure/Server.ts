@@ -38,7 +38,8 @@ export default class Server {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async start(): Promise<http.Server> {
     // generate schema file
-    await SchemaFileGenerator.generateSchemaFile();
+    const generator = new SchemaFileGenerator(this.logger)
+    await generator.generateSchemaFile();
 
     if (this.rawServer) {
       return this.rawServer;

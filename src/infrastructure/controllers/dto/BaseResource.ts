@@ -1,4 +1,5 @@
-import { JsonSchema7Type } from "zod-to-json-schema";
+import { ZodType } from "zod";
+import zodToJsonSchema, { JsonSchema7Type } from "zod-to-json-schema";
 
 export interface Link {
   rel: string;
@@ -12,6 +13,10 @@ export type GenerateLinkFn<T extends BaseResource<any>> = (resourceInstance: T) 
 export type DtoWithLinks<T> = T & { _links: Link[] };
 
 export default abstract class BaseResource<T> {
+  public static getJsonSchemas(): JsonSchema7Type[] {
+    throw new Error('getJsonSchemas is not implemented');
+  }
+
   protected _dto: T;
   private _links: Link[] = [];
 
