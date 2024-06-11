@@ -14,11 +14,13 @@ import { DraftListDto } from "./dto/draftList/DraftListResource";
 import DraftListSerializer from "./dto/draftList/DraftListSerializer";
 import { ValidationError } from "../../domain/shared/Errors";
 import { AuthMiddleware } from "../middlewares/AuthMiddleware";
+import { Context } from "vm";
 
 @controller('/drafts', 'AuthMiddleware')
 export class DraftController {
   constructor(
     @inject('Logger') private readonly logger: Logger,
+    @inject('Context') private readonly context: Context,
     @inject('Service') @named('Draft') private readonly draftService: DraftService,
     @inject('Service') @named('Deck') private readonly deckService: DeckService,
   ) { }
@@ -39,13 +41,12 @@ export class DraftController {
     }
 
     const { name, initialNumberOfKegs, availableFactions } = body;
+    const userId = this.context.get('userId');
 
-    const draft = await this.draftService.createNewDraft({
-      userId: '456',
-      gameVersion: '1.0.0',
-      initialNumberOfKegs,
-      availableFactions: availableFactions as Faction[],
+    const draft = await this.draftService.createNewDraft(userId, {
       name,
+      maxKegs: initialNumberOfKegs,
+      availableFactions: availableFactions as Faction[],
     });
 
     return DraftSerializer.toDto(draft);

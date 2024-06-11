@@ -8,8 +8,9 @@ import { FactionDto } from "../faction/FactionResource";
 import FactionSerializer from "../faction/FactionSerializer";
 
 export interface DraftDto {
-  totalKegs: number;
-  remainingKegs: number;
+  name: string;
+  numberOpenedKegs: number;
+  maxKegs: number;
   availableFactions: DtoWithLinks<FactionDto>[];
   decks: DtoWithLinks<DeckDto>[];
 }
@@ -36,10 +37,11 @@ export default class DraftResource extends BaseResource<DraftDto> {
 
     this._model = model;
     this._dto = {
-      totalKegs: model.initialNumberOfKegs,
-      remainingKegs: model.remainingKegs,
+      name: model.settings.name,
+      numberOpenedKegs: model.numberOpenedKegs,
+      maxKegs: model.settings.maxKegs,
       decks: model.decks.map(deck => DeckSerializer.toDto(deck, { isPartOfCollection: true })),
-      availableFactions: model.availableFactions.map(f => FactionSerializer.toDto(f, model)),
+      availableFactions: model.settings.availableFactions.map(f => FactionSerializer.toDto(f, model)),
     };
   }
 

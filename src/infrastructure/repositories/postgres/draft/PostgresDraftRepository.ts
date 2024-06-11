@@ -29,7 +29,7 @@ export default class PostgresDraftRepository implements DraftRepository {
 
       return drafts;
     } catch (err) {
-      this.logger.error(`[PostgresDraftRepository][getAll] Error getting drafts`);
+      this.logger.error(`[PostgresDraftRepository][getAll] Error getting drafts`, err);
       throw new ServerError('Unexpected error');
     }
   }
@@ -68,11 +68,12 @@ export default class PostgresDraftRepository implements DraftRepository {
       const draftEntity = PostgresDraftSerializer.toEntity(draft);
       await this.postgresLayer.pool.query(
         `UPDATE ${DRAFTS_TABLE_NAME}
-        SET user_id = $1, initial_number_of_kegs = $2, game_version = $3, available_factions = $4
-        WHERE id = $5`,
+        SET user_id = $1, max_kegs = $2, number_opened_kegs = $3, game_version = $4, available_factions = $5
+        WHERE id = $6`,
         [
           draftEntity.user_id,
-          draftEntity.initial_number_of_kegs,
+          draftEntity.max_kegs,
+          draftEntity.number_opened_kegs,
           draftEntity.game_version,
           draftEntity.available_factions,
           draftEntity.id,
@@ -90,13 +91,13 @@ export default class PostgresDraftRepository implements DraftRepository {
       const draftEntityWithoutId = PostgresDraftSerializer.toEntity<true>(draft);
       const result = await this.postgresLayer.pool.query(
         `INSERT INTO ${DRAFTS_TABLE_NAME}
-        (user_id, initial_number_of_kegs, remaining_kegs, game_version, available_factions)
+        (user_id, max_kegs, number_opened_kegs, game_version, available_factions)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING *`,
         [
           draftEntityWithoutId.user_id,
-          draftEntityWithoutId.initial_number_of_kegs,
-          draftEntityWithoutId.remaining_kegs,
+          draftEntityWithoutId.max_kegs,
+          draftEntityWithoutId.number_opened_kegs,
           draftEntityWithoutId.game_version,
           JSON.stringify(draftEntityWithoutId.available_factions),
         ],

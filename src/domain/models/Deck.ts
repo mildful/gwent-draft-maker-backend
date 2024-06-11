@@ -1,19 +1,23 @@
+import { z } from "zod";
 import { CannotAddCardToDeckError } from "../errors/CannotAddCardToDeckError";
 import { Validator } from "../shared/Validator";
 import Card from "./Card";
 import { ContentVersion } from "./ContentVersion";
 import Faction from "./Faction";
+import { ValidationError } from "../shared/Errors";
 
-export interface DeckCreateParams {
-  id?: number;
-  contentVersion: ContentVersion;
-  faction: Faction;
-  leader: Card;
-  stratagem: Card;
-  parentDraftId: number;
-  name?: string;
-  cards?: Card[];
-}
+const deckCreateParamsSchema = z.object({
+  id: z.number().optional(),
+  contentVersion: z.string(),
+  faction: z.nativeEnum(Faction),
+  leader: z.instanceof(Card),
+  stratagem: z.instanceof(Card),
+  parentDraftId: z.number(),
+  name: z.string().optional(),
+  cards: z.array(z.instanceof(Card)).optional(),
+}).strict();
+
+export type DeckCreateParams = z.infer<typeof deckCreateParamsSchema>;
 
 interface DeckState {
   id?: number;
@@ -39,18 +43,10 @@ export default class Deck {
   public get parentDraftId(): number { return this._state.parentDraftId; }
 
   constructor(params: DeckCreateParams) {
-    Validator.validate(params, Validator.isObject, `[Deck][constructor] params must be an object: ${params}`);
-    Validator.validate(params.contentVersion, Validator.isNonEmptyString, `[Deck][constructor] params.contentVersion must be a non-empty string: ${params.contentVersion}`);
-    Validator.validate(params.faction, Validator.isNonEmptyString, `[Deck][constructor] params.faction must be a non-empty string: ${params.faction}`);
-    Validator.validate(params.parentDraftId, Validator.isNumber, `[Deck][constructor] Invalid parent draft id: ${params.parentDraftId}`);
-
-    if (params.cards) {
-      Validator.validate(params.cards, Validator.isArray, `[Deck][constructor] params.cards must be an array: ${params.cards}`);
-    }
-    if (params.id) {
-      Validator.validate(params.id, Validator.isNumber, `[Deck][constructor] Invalid id: ${params.id}`);
-    }
-    if (params.parentDraftId) {
+    try {
+      deckCreateParamsSchema.parse(params);
+    } catch (error) {
+      throw new ValidationError(`[Deck][constructor] Invalid DeckCreateParams`, undefined, error.format());
     }
 
     this._state = {

@@ -21,8 +21,8 @@ export const draftTableDefinition: TableDefinition<DraftEntity> = {
     id: { type: 'serial', isPrimaryKey: true },
     user_id: { type: 'varchar', length: 100 },
     name: { type: 'varchar', length: 50, nullable: true },
-    initial_number_of_kegs: { type: 'smallint' },
-    remaining_kegs: { type: 'smallint' },
+    number_opened_kegs: { type: 'smallint' },
+    max_kegs: { type: 'smallint' },
     game_version: { type: 'varchar', length: 10 },
     available_factions: { type: 'jsonb' },
   }

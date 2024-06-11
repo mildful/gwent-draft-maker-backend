@@ -1,13 +1,65 @@
+import { z } from "zod";
 import { Validator } from "../shared/Validator";
 import { ContentVersion } from "./ContentVersion";
 import Faction from "./Faction";
+import { ValidationError } from "../shared/Errors";
 
-export type CardType = 'Unit' | 'Special' | 'Stratagem' | 'Leader' | 'Artifact';
-export type CardColor = 'Bronze' | 'Gold' | 'Leader';
-export type CardRarity = 'Legendary' | 'Epic' | 'Rare' | 'Uncommon' | 'Common';
-export type CardSet = 'Price of Power' | 'Uroboros' | 'Thronebreaker' | 'Unmillable' | 'Iron Judgment' | 'Novigrad' | 'CrimsonCurse' | 'NonOwnable' | 'Merchants of Ofir' | 'Cursed Toad' | 'Master Mirror' | 'BaseSet' | 'Way of the Witcher';
+export enum CardType {
+  Unit = 'Unit',
+  Special = 'Special',
+  Stratagem = 'Stratagem',
+  Leader = 'Leader',
+  Artifact = 'Artifact',
+}
 
-export type CreateCardParams = CardState;
+export enum CardColor {
+  Bronze = 'Bronze',
+  Gold = 'Gold',
+  Leader = 'Leader',
+}
+
+export enum CardRarity {
+  Legendary = 'Legendary',
+  Epic = 'Epic',
+  Rare = 'Rare',
+  Uncommon = 'Uncommon',
+  Common = 'Common',
+}
+
+export enum CardSet {
+  PriceOfPower = 'Price of Power',
+  Uroboros = 'Uroboros',
+  Thronebreaker = 'Thronebreaker',
+  Unmillable = 'Unmillable',
+  IronJudgment = 'Iron Judgment',
+  Novigrad = 'Novigrad',
+  CrimsonCurse = 'CrimsonCurse',
+  NonOwnable = 'NonOwnable',
+  MerchantsOfOfir = 'Merchants of Ofir',
+  CursedToad = 'Cursed Toad',
+  MasterMirror = 'Master Mirror',
+  BaseSet = 'BaseSet',
+  WayOfTheWitcher = 'Way of the Witcher',
+}
+
+const cardCreateParamsSchema = z.object({
+  id: z.number(),
+  contentVersion: z.string(),
+  artId: z.number(),
+  type: z.nativeEnum(CardType),
+  armor: z.number().int().positive(),
+  color: z.nativeEnum(CardColor),
+  power: z.number().int().positive(),
+  reach: z.number().int().positive(),
+  artistName: z.string(),
+  rarity: z.nativeEnum(CardRarity),
+  faction: z.nativeEnum(Faction),
+  secondaryFaction: z.nativeEnum(Faction).optional(),
+  provision: z.number().int().positive(),
+  set: z.nativeEnum(CardSet),
+}).strict();
+
+export type CardCreateParams = z.infer<typeof cardCreateParamsSchema>;
 
 interface CardState {
   id: number,
@@ -21,7 +73,7 @@ interface CardState {
   artistName: string;
   rarity: CardRarity;
   faction: Faction;
-  secondaryFaction: Faction;
+  secondaryFaction?: Faction;
   provision: number;
   set: CardSet;
 }
@@ -38,27 +90,18 @@ export default class Card {
   public get reach(): number { return this._state.reach; }
   public get rarity(): CardRarity { return this._state.rarity; }
   public get faction(): Faction { return this._state.faction; }
-  public get secondaryFaction(): Faction { return this._state.secondaryFaction; }
+  public get secondaryFaction(): Faction | undefined { return this._state.secondaryFaction; }
   public get provision(): number { return this._state.provision; }
   public get set(): CardSet { return this._state.set; }
   public get type(): CardType { return this._state.type; }
   public get contentVersion(): string { return this._state.contentVersion; }
 
-  constructor(params: CreateCardParams) {
-    Validator.validate(params, Validator.isObject, '[User][constructor] params must be an object');
-    Validator.validate(params.armor, Validator.isNumber, '[User][constructor] params.armor must be a number');
-    Validator.validate(params.artId, Validator.isNumber, '[User][constructor] params.artId must be a number');
-    Validator.validate(params.artistName, Validator.isNonEmptyString, '[User][constructor] params.artistName must be a non-empty string');
-    Validator.validate(params.color, Validator.isNonEmptyString, '[User][constructor] params.color must be a non-empty string');
-    Validator.validate(params.power, Validator.isNumber, '[User][constructor] params.power must be a number');
-    Validator.validate(params.reach, Validator.isNumber, '[User][constructor] params.reach must be a number');
-    Validator.validate(params.rarity, Validator.isNonEmptyString, '[User][constructor] params.rarity must be a non-empty string');
-    Validator.validate(params.faction, Validator.isNonEmptyString, '[User][constructor] params.faction must be a non-empty string');
-    Validator.validate(params.secondaryFaction, Validator.isNonEmptyString, '[User][constructor] params.secondaryFaction must be a non-empty string');
-    Validator.validate(params.provision, Validator.isNumber, '[User][constructor] params.provision must be a number');
-    Validator.validate(params.set, Validator.isNonEmptyString, '[User][constructor] params.set must be a non-empty string');
-    Validator.validate(params.type, Validator.isNonEmptyString, '[User][constructor] params.type must be a non-empty string');
-    Validator.validate(params.contentVersion, Validator.isNonEmptyString, '[User][constructor] params.contentVersion must be a non-empty string');
+  constructor(params: CardCreateParams) {
+    try {
+      cardCreateParamsSchema.parse(params);
+    } catch (error) {
+      throw new ValidationError(`[Card][constructor] Invalid CardCreateParams`, undefined, error.format());
+    }
 
     this._state = params;
   }

@@ -1,3 +1,6 @@
+# Reset everything:
+` npm run drop-database &&  npm run rm-dependency && docker system prune -a && npm run start-dependency`
+
 ## GET /drafts
 ```js
 {

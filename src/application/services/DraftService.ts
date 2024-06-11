@@ -3,6 +3,7 @@ import Draft, { DraftCreateParams } from "../../domain/models/Draft";
 import DraftRepository from "../../infrastructure/repositories/DraftRepository";
 import { DraftNotFoundError } from "../../domain/errors/DraftNotFoundError";
 import Keg from "../../domain/models/Keg";
+import Faction from "../../domain/models/Faction";
 
 @injectable()
 export default class DraftService {
@@ -14,8 +15,20 @@ export default class DraftService {
     return this.draftRepository.getAll();
   }
 
-  public async createNewDraft(draftParams: DraftCreateParams): Promise<Draft> {
-    const draft = new Draft(draftParams);
+  public async createNewDraft(userId: string, options: {
+    name?: string,
+    maxKegs: number,
+    availableFactions: Faction[],
+  }): Promise<Draft> {
+    const draft = new Draft({
+      userId,
+      settings: {
+        name: options.name || 'Unnamed Draft',
+        maxKegs: options.maxKegs,
+        gameVersion: '1.0.0',
+        availableFactions: options.availableFactions,
+      },
+    });
     const newDraft = await this.draftRepository.save(draft);
     return newDraft;
   }
