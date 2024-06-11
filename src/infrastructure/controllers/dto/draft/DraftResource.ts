@@ -23,7 +23,10 @@ export default class DraftResource extends BaseResource<DraftDto> {
     }),
   };
   public static getJsonSchemas(): JsonSchema7Type[] {
-    return Object.keys(DraftResource.schemas).map(key => zodToJsonSchema(DraftResource.schemas[key], key));
+    return Object.keys(DraftResource.schemas).map(key => ({
+      title: key,
+      ...zodToJsonSchema(DraftResource.schemas[key], { $refStrategy: 'none' }),
+    }));
   }
 
   private _model: Draft;

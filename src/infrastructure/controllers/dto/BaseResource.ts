@@ -9,7 +9,7 @@ export interface Link {
 
 export type GenerateLinkFn<T extends BaseResource<any>> = (resourceInstance: T) => Link | null;
 
-export type DtoWithLinks<T> = T & { _links: Link[] };
+export type DtoWithLinks<T> = T & { _links?: Link[] };
 
 export default abstract class BaseResource<T> {
   public static getJsonSchemas(): JsonSchema7Type[] {
@@ -42,7 +42,7 @@ export default abstract class BaseResource<T> {
   public getDtoWithLinks(): DtoWithLinks<T> {
     return {
       ...this._dto,
-      _links: this._links,
+      _links: this._links.length ? this._links : undefined,
     };
   }
 }

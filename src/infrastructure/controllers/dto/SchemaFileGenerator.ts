@@ -1,24 +1,29 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as md5 from 'md5';
 import { JsonSchema7Type } from 'zod-to-json-schema';
 import Logger from '../../../domain/models/utils/Logger';
 
 export class SchemaFileGenerator {
   private logger: Logger;
-  private destPath: string;
+  private destFolder: string;
 
   constructor(logger: Logger, options?: {
-    destPath: string;
+    destFolder: string;
   }) {
     this.logger = logger;
-    this.destPath = options?.destPath || path.join(__dirname, '../../../../public/schemas.json');
+    this.destFolder = options?.destFolder || path.join(__dirname, '../../../../public');
   }
 
   public async generateSchemaFile(): Promise<void> {
     const resourceFilePaths = await this.listResourceFiles();
     const jsonSchemas = await this.getJsonSchemasFromResourceFiles(resourceFilePaths);
 
-    fs.writeFileSync(this.destPath, JSON.stringify(jsonSchemas));
+    const fileContent = JSON.stringify(jsonSchemas);
+    const version = md5(fileContent)
+
+    fs.writeFileSync(path.join(this.destFolder, 'schemas.json'), fileContent);
+    fs.writeFileSync(path.join(this.destFolder, 'version.json'), JSON.stringify({ version }));
   }
 
   private async getJsonSchemasFromResourceFiles(filePaths: string[]): Promise<JsonSchema7Type[]> {
@@ -69,5 +74,3 @@ export class SchemaFileGenerator {
     return resoucePaths;
   }
 }
-
-
