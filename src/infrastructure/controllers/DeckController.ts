@@ -7,7 +7,7 @@ import { DtoWithLinks } from "./dto/BaseResource";
 import { DeckDto } from "./dto/deck/DeckResource";
 import DeckSerializer from "./dto/deck/DeckSerializer";
 
-@controller('/decks')
+@controller('/decks', 'AuthMiddleware')
 export class DeckController {
   constructor(
     @inject('Logger') private readonly logger: Logger,
