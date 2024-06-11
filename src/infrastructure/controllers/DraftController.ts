@@ -13,8 +13,9 @@ import DraftSerializer from "./dto/draft/DraftSerializer";
 import { DraftListDto } from "./dto/draftList/DraftListResource";
 import DraftListSerializer from "./dto/draftList/DraftListSerializer";
 import { ValidationError } from "../../domain/shared/Errors";
+import { AuthMiddleware } from "../middlewares/AuthMiddleware";
 
-@controller('/drafts')
+@controller('/drafts', 'AuthMiddleware')
 export class DraftController {
   constructor(
     @inject('Logger') private readonly logger: Logger,

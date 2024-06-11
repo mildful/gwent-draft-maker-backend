@@ -2,7 +2,7 @@ import { getAuth } from "firebase-admin/auth";
 import AuthProvider from "./AuthProvider";
 import { inject, injectable } from "inversify";
 import Logger from "../../../domain/models/utils/Logger";
-import { ServerError } from "../../../domain/shared/Errors";
+import { UserNotLoggedInError } from "../../../domain/errors/UserNotLoggedInError";
 
 @injectable()
 export default class FirebaseAuthProvider implements AuthProvider {
@@ -15,8 +15,8 @@ export default class FirebaseAuthProvider implements AuthProvider {
       const decodedToken = await getAuth().verifyIdToken(token);
       return decodedToken.sub;
     } catch (err) {
-      this.logger.error(`[FirebaseAuthProvider][signWithEmail] Unexpected error.`);
-      throw new ServerError();
+      this.logger.info(`[FirebaseAuthProvider][signWithEmail] ${err.message}`);
+      throw new UserNotLoggedInError();
     }
   }
 }

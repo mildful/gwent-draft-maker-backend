@@ -5,6 +5,7 @@ export enum ErrorCode {
   DECK_NOT_FOUND = 'DeckNotFound',
   DRAFT_NOT_FOUND = 'DraftNotFound',
   USER_NOT_FOUND = 'UserNotFound',
+  USER_NOT_LOGGED_IN = 'UserNotLoggedIn',
   GENERIC_CONFLICT = 'GenericConflictError',
   GENERIC_DOMAIN = 'GenericDomainError',
   GENERIC_FORBIDDEN = 'GenericForbiddenError',

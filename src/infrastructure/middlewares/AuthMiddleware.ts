@@ -3,7 +3,6 @@ import { inject, injectable, named } from 'inversify';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { UnauthorizedError } from '../../domain/shared/Errors';
 import Context from '../../domain/models/utils/Context';
-import User from '../../domain/models/Card';
 import AuthProvider from '../providers/auth/AuthProvider';
 
 @injectable()
@@ -16,19 +15,24 @@ export class AuthMiddleware extends BaseMiddleware {
   }
 
   public async handler(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const token = req.header('test'); // TODO: handle the right header from Firebase
+    const token = req.header('Authorization');
 
     if (!token) {
       return next();
     }
 
-    const userId = await this.authProvider.verifyToken(token);
+    let userId: string;
+    try {
+      userId = await this.authProvider.verifyToken(token);
+    } catch (err) {
+      return next(err);
+    }
 
     if (userId) {
       this.context.set('userId', userId);
-      next();
+      return next();
     } else {
-      next(new UnauthorizedError('Authentication required'));
+      return next(new UnauthorizedError('Authentication required'));
     }
   }
 }
