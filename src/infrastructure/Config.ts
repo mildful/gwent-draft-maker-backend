@@ -1,10 +1,12 @@
-export interface ServerConfig {
+export interface HttpServerConfig {
   port: number;
   cors: {
     origins: string[];
   };
-  environment: string;
-  version: string;
+}
+
+export interface ServerConfig {
+  http: HttpServerConfig;
 }
 
 export interface FirebaseConfig {
@@ -32,6 +34,8 @@ export interface DatabaseConfig {
 }
 
 export default interface Config {
+  environment: string;
+  version: string;
   server: ServerConfig;
   auth: {
     firebase: FirebaseConfig;

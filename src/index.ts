@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Application } from './infrastructure/Application';
+import { Application } from './Application';
 
 const app = new Application();
 

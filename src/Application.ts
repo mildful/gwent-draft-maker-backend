@@ -5,34 +5,34 @@ import * as http from 'http';
 import { BindingScopeEnum, Container } from 'inversify';
 import { Pool } from 'pg';
 
-import Clock from '../domain/models/utils/Clock';
-import Context from '../domain/models/utils/Context';
-import HttpClient from '../domain/models/utils/HttpClient';
-import Logger from '../domain/models/utils/Logger';
-import AxiosHttpClient from './utils/AxiosHttpClient';
-import ConsoleLogger from './utils/ConsoleLogger';
-import ExecutionContext from './utils/ExecutionContext';
-import SystemClock from './utils/SystemClock';
+import Clock from './domain/models/utils/Clock';
+import Context from './domain/models/utils/Context';
+import HttpClient from './domain/models/utils/HttpClient';
+import Logger from './domain/models/utils/Logger';
+import AxiosHttpClient from './infrastructure/utils/AxiosHttpClient';
+import ConsoleLogger from './infrastructure/utils/ConsoleLogger';
+import ExecutionContext from './infrastructure/utils/ExecutionContext';
+import SystemClock from './infrastructure/utils/SystemClock';
 
-import DeckService from '../application/services/DeckService';
-import DraftService from '../application/services/DraftService';
-import Hash from '../domain/models/utils/Hash';
-import Config, { DatabasePostgresConfig } from './Config';
-import Server from './Server';
-import AuthProvider from './providers/auth/AuthProvider';
-import FirebaseAuthProvider from './providers/auth/FirebaseAuthProvider';
-import DeckRepository from './repositories/DeckRepository';
-import DraftRepository from './repositories/DraftRepository';
-import PostgresLayer from './repositories/postgres/PostgresLayer';
-import PostgresDeckRepository from './repositories/postgres/deck/PostgresDeckRepository';
-import PostgresDraftRepository from './repositories/postgres/draft/PostgresDraftRepository';
-import BcryptHash from './utils/BcryptHash';
+import DeckService from './application/services/DeckService';
+import DraftService from './application/services/DraftService';
+import Hash from './domain/models/utils/Hash';
+import Config, { DatabasePostgresConfig } from './infrastructure/Config';
+import HttpServer from './infrastructure/api/http/HttpServer';
+import AuthProvider from './infrastructure/providers/auth/AuthProvider';
+import FirebaseAuthProvider from './infrastructure/providers/auth/FirebaseAuthProvider';
+import DeckRepository from './infrastructure/repositories/DeckRepository';
+import DraftRepository from './infrastructure/repositories/DraftRepository';
+import PostgresLayer from './infrastructure/repositories/postgres/PostgresLayer';
+import PostgresDeckRepository from './infrastructure/repositories/postgres/deck/PostgresDeckRepository';
+import PostgresDraftRepository from './infrastructure/repositories/postgres/draft/PostgresDraftRepository';
+import BcryptHash from './infrastructure/utils/BcryptHash';
 
 export class Application {
   public readonly container: Container;
   public readonly logger: Logger;
 
-  private server: Server;
+  private httpServer: HttpServer;
   private config: Config;
   private readonly context: Context;
 
@@ -46,7 +46,7 @@ export class Application {
       context: this.context,
       applicationId: process.env.npm_package_name ?? 'undefined',
       level: this.config.logger.level,
-      pretty: this.config.server.environment === 'development',
+      pretty: this.config.environment === 'development',
       enabled: this.config.logger.enabled,
     });
   }
@@ -57,22 +57,23 @@ export class Application {
     await this.bindRepositories();
     this.bindServices();
     this.bindProviders();
+
     this.initAxios();
 
-    this.server = new Server(
+    this.httpServer = new HttpServer(
       this.container,
-      this.config.server.port,
-      this.config.server.cors.origins,
+      this.config.server.http.port,
+      this.config.server.http.cors.origins,
       this.config.logger.middleware,
     );
 
-    return this.server.start();
+    return this.httpServer.start();
   }
 
   public async stop(): Promise<void> {
-    if (this.server) {
+    if (this.httpServer) {
       try {
-        await this.server.stop();
+        await this.httpServer.stop();
       } catch (e) {
         this.logger.error(e);
       }
@@ -81,13 +82,15 @@ export class Application {
 
   private getConfig(): Config {
     return {
+      environment: config.get<string>('environment'),
+      version: config.get<string>('version'),
       server: {
-        port: config.get<number>('server.port'),
-        cors: {
-          origins: config.get<string[]>('server.cors.origins'),
-        },
-        environment: config.get<string>('server.environment'),
-        version: config.get<string>('server.version'),
+        http: {
+          port: config.get<number>('server.http.port'),
+          cors: {
+            origins: config.get<string[]>('server.http.cors.origins'),
+          },
+        }
       },
       auth: {
         firebase: {
@@ -167,6 +170,7 @@ export class Application {
     // }
   }
 
+  // TODO: move this to the axios implementation constructor
   private initAxios(): void {
     axios.interceptors.request.use((axiosConfig: any) => {
       this.logger.info(

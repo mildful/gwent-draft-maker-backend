@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as md5 from 'md5';
 import { JsonSchema7Type } from 'zod-to-json-schema';
-import Logger from '../../../../domain/models/utils/Logger';
+import Logger from '../../../../../domain/models/utils/Logger';
 
 export class SchemaFileGenerator {
   private logger: Logger;
@@ -12,7 +12,7 @@ export class SchemaFileGenerator {
     destFolder: string;
   }) {
     this.logger = logger;
-    this.destFolder = options?.destFolder || path.join(__dirname, '../../../../../public');
+    this.destFolder = options?.destFolder || path.join(__dirname, '../../../../../../public');
   }
 
   public async generateSchemaFile(): Promise<void> {

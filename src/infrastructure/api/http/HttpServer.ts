@@ -5,22 +5,22 @@ import * as http from 'http';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import * as express from 'express';
-import * as DomainErrors from '../domain/shared/Errors';
-import Context from '../domain/models/utils/Context';
-import Logger, { LogLevel } from '../domain/models/utils/Logger';
-import { ErrorCode } from '../domain/shared/Errors';
-import { ContextMiddleware } from './middlewares/ContextMiddleware';
-import { AuthMiddleware } from './middlewares/AuthMiddleware';
-import { CorsMiddleware } from './middlewares/CorsMiddleware';
-import { LogMiddleware } from './middlewares/LogMiddleware';
-import { SchemaFileGenerator } from './controllers/http/dto/SchemaFileGenerator';
+import * as DomainErrors from '../../../domain/shared/Errors';
+import Context from '../../../domain/models/utils/Context';
+import Logger, { LogLevel } from '../../../domain/models/utils/Logger';
+import { ErrorCode } from '../../../domain/shared/Errors';
+import { ContextMiddleware } from '../../middlewares/ContextMiddleware';
+import { AuthMiddleware } from '../../middlewares/AuthMiddleware';
+import { CorsMiddleware } from '../../middlewares/CorsMiddleware';
+import { LogMiddleware } from '../../middlewares/LogMiddleware';
+import { SchemaFileGenerator } from './controllers/dto/SchemaFileGenerator';
 import path = require('path');
 
 // TODO: automatically import based on file system
-import './controllers/http/DraftController';
-import './controllers/http/DeckController';
+import './controllers/DraftController';
+import './controllers/DeckController';
 
-export default class Server {
+export default class HttpServer {
   private readonly logger: Logger;
   private readonly context: Context;
   private rawServer: http.Server | null;

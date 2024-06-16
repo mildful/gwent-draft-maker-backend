@@ -1,4 +1,4 @@
-import Deck from "../../../../../domain/models/Deck";
+import Deck from "../../../../../../domain/models/Deck";
 import BaseResource, { DtoWithLinks } from "../BaseResource";
 import { DeckDto } from "../deck/DeckResource";
 import DeckSerializer from "../deck/DeckSerializer";

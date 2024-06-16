@@ -1,4 +1,4 @@
-import Draft from "../../../../../domain/models/Draft";
+import Draft from "../../../../../../domain/models/Draft";
 import BaseResource, { DtoWithLinks, Link } from "../BaseResource";
 import { DraftDto } from "../draft/DraftResource";
 import DraftSerializer from "../draft/DraftSerializer";

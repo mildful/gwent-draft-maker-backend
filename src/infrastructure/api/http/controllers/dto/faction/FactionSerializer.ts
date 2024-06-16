@@ -1,5 +1,5 @@
-import Draft from '../../../../../domain/models/Draft';
-import Faction from '../../../../../domain/models/Faction';
+import Draft from '../../../../../../domain/models/Draft';
+import Faction from '../../../../../../domain/models/Faction';
 import { DtoWithLinks } from '../BaseResource';
 import FactionResource from './FactionResource';
 import { FactionDto } from './FactionResource';

@@ -1,10 +1,12 @@
 import { inject, named } from "inversify";
 import { controller, httpGet, httpPost, queryParam, requestBody, requestParam } from "inversify-express-utils";
-import DeckService from "../../../application/services/DeckService";
-import DraftService from "../../../application/services/DraftService";
-import Faction, { isValidFaction } from "../../../domain/models/Faction";
-import Logger from "../../../domain/models/utils/Logger";
-import { Validator } from "../../../domain/shared/Validator";
+import { Context } from "vm";
+import DeckService from "../../../../application/services/DeckService";
+import DraftService from "../../../../application/services/DraftService";
+import Faction, { isValidFaction } from "../../../../domain/models/Faction";
+import Logger from "../../../../domain/models/utils/Logger";
+import { ValidationError } from "../../../../domain/shared/Errors";
+import { Validator } from "../../../../domain/shared/Validator";
 import { DtoWithLinks } from "./dto/BaseResource";
 import { DeckDto } from "./dto/deck/DeckResource";
 import DeckSerializer from "./dto/deck/DeckSerializer";
@@ -12,9 +14,6 @@ import DraftResource, { DraftDto } from "./dto/draft/DraftResource";
 import DraftSerializer from "./dto/draft/DraftSerializer";
 import { DraftListDto } from "./dto/draftList/DraftListResource";
 import DraftListSerializer from "./dto/draftList/DraftListSerializer";
-import { ValidationError } from "../../../domain/shared/Errors";
-import { AuthMiddleware } from "../../middlewares/AuthMiddleware";
-import { Context } from "vm";
 
 @controller('/drafts', 'AuthMiddleware')
 export class DraftController {

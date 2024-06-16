@@ -1,4 +1,4 @@
-import Faction from "../../../../../domain/models/Faction";
+import Faction from "../../../../../../domain/models/Faction";
 import BaseResource, { Link } from "../BaseResource";
 
 export interface FactionDto {
