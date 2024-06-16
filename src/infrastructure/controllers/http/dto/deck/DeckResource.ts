@@ -1,4 +1,4 @@
-import Deck from "../../../../domain/models/Deck";
+import Deck from "../../../../../domain/models/Deck";
 import BaseResource, { Link } from "../BaseResource";
 
 export interface DeckDto {

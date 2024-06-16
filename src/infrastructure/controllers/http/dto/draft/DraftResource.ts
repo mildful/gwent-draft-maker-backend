@@ -1,6 +1,6 @@
 import { ZodType, z } from "zod";
 import zodToJsonSchema, { JsonSchema7Type } from "zod-to-json-schema";
-import Draft from "../../../../domain/models/Draft";
+import Draft from "../../../../../domain/models/Draft";
 import BaseResource, { DtoWithLinks, Link } from "../BaseResource";
 import { DeckDto } from "../deck/DeckResource";
 import DeckSerializer from "../deck/DeckSerializer";

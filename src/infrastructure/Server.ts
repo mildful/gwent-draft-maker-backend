@@ -13,12 +13,12 @@ import { ContextMiddleware } from './middlewares/ContextMiddleware';
 import { AuthMiddleware } from './middlewares/AuthMiddleware';
 import { CorsMiddleware } from './middlewares/CorsMiddleware';
 import { LogMiddleware } from './middlewares/LogMiddleware';
+import { SchemaFileGenerator } from './controllers/http/dto/SchemaFileGenerator';
+import path = require('path');
 
 // TODO: automatically import based on file system
-import './controllers/DraftController';
-import './controllers/DeckController';
-import { SchemaFileGenerator } from './controllers/dto/SchemaFileGenerator';
-import path = require('path');
+import './controllers/http/DraftController';
+import './controllers/http/DeckController';
 
 export default class Server {
   private readonly logger: Logger;

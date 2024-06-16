@@ -1,8 +1,8 @@
 import { inject, named } from "inversify";
 import { controller, httpGet, requestParam } from "inversify-express-utils";
-import DeckService from "../../application/services/DeckService";
-import Logger from "../../domain/models/utils/Logger";
-import { Validator } from "../../domain/shared/Validator";
+import DeckService from "../../../application/services/DeckService";
+import Logger from "../../../domain/models/utils/Logger";
+import { Validator } from "../../../domain/shared/Validator";
 import { DtoWithLinks } from "./dto/BaseResource";
 import { DeckDto } from "./dto/deck/DeckResource";
 import DeckSerializer from "./dto/deck/DeckSerializer";

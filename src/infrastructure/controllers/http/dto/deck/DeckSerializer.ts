@@ -1,4 +1,4 @@
-import Deck from '../../../../domain/models/Deck';
+import Deck from '../../../../../domain/models/Deck';
 import { DtoWithLinks } from '../BaseResource';
 import DraftResource from '../draft/DraftResource';
 import DraftListResource from '../draftList/DraftListResource';
