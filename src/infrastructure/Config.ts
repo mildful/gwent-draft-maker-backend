@@ -1,4 +1,5 @@
 export interface HttpServerConfig {
+  enabled: boolean;
   port: number;
   cors: {
     origins: string[];

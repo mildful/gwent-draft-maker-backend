@@ -3,7 +3,8 @@ module.exports = {
   version: process.env.APPLICATION_VERSION || '0.0.0',
   server: {
     http: {
-      port: process.env.HTTP_SERVER_PORT ? +process.env.HTTP_SERVER_PORT : 8080,
+      enabled: process.env.HTTP_SERVER_ENABLED !== 'false',
+      port: process.env.HTTP_SERVER_PORT ? +process.env.HTTP_SERVER_PORT : 8081,
       cors: {
         origins: (process.env.HTTP_SERVER_CORS_ORIGINS || '').split(',').map((v) => { return v.trim(); }).filter((v, i, s) => { return v !== '' && s.indexOf(v) === i; }),
       },

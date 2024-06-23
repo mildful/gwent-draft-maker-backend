@@ -99,7 +99,7 @@ export default class HttpServer {
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
     app.use(cookieParser());
-    app.use(express.static(path.join(__dirname, '../../public')));
+    app.use(express.static(path.join(__dirname, '../../../../public')));
 
     const contextMiddleware = new ContextMiddleware(this.context);
     app.use(contextMiddleware.initContext.bind(contextMiddleware));

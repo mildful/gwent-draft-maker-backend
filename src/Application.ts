@@ -51,7 +51,7 @@ export class Application {
     });
   }
 
-  public async start(): Promise<http.Server> {
+  public async start(): Promise<void> {
     this.bindConfig();
     this.bindUtils();
     await this.bindRepositories();
@@ -60,14 +60,15 @@ export class Application {
 
     this.initAxios();
 
-    this.httpServer = new HttpServer(
-      this.container,
-      this.config.server.http.port,
-      this.config.server.http.cors.origins,
-      this.config.logger.middleware,
-    );
-
-    return this.httpServer.start();
+    if (this.config.server.http.enabled) {
+      this.httpServer = new HttpServer(
+        this.container,
+        this.config.server.http.port,
+        this.config.server.http.cors.origins,
+        this.config.logger.middleware,
+      );
+      await this.httpServer.start();
+    }
   }
 
   public async stop(): Promise<void> {
@@ -86,6 +87,7 @@ export class Application {
       version: config.get<string>('version'),
       server: {
         http: {
+          enabled: config.get<boolean>('server.http.enabled'),
           port: config.get<number>('server.http.port'),
           cors: {
             origins: config.get<string[]>('server.http.cors.origins'),
