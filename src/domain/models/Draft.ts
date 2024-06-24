@@ -11,8 +11,8 @@ import Keg from "./Keg";
 export const draftCreateParamsSchema = z.object({
   id: z.number().optional(),
   userId: z.string(),
+  name: z.string().max(50),
   settings: z.object({
-    name: z.string().max(50),
     maxKegs: z.number().int().positive(),
     gameVersion: z.string(),
     availableFactions: z.array(z.nativeEnum(Faction)), // TODO: uniqueness
@@ -28,6 +28,7 @@ export type DraftCreateParams = z.infer<typeof draftCreateParamsSchema>;
 interface DraftState {
   id: number | null;
   userId: string;
+  name: string;
   settings: DraftSettings;
   currentKeg: Keg | null;
   numberOpenedKegs: number;
@@ -36,7 +37,6 @@ interface DraftState {
 }
 
 export interface DraftSettings {
-  name: string;
   maxKegs: number;
   gameVersion: string;
   availableFactions: Faction[];
@@ -48,6 +48,7 @@ export default class Draft {
 
   public get id(): number | null { return this._state.id; }
   public get userId(): string { return this._state.userId; }
+  public get name(): string { return this._state.name; }
   public get settings(): DraftSettings { return this._state.settings; }
   public get numberOpenedKegs(): number { return this._state.numberOpenedKegs; }
   public get decks(): Deck[] { return this._state.decks; }
@@ -63,8 +64,8 @@ export default class Draft {
     this._state = {
       id: params.id || null,
       userId: params.userId,
+      name: params.name,
       settings: {
-        name: params.settings.name,
         maxKegs: params.settings.maxKegs,
         gameVersion: params.settings.gameVersion,
         availableFactions: params.settings.availableFactions || [],

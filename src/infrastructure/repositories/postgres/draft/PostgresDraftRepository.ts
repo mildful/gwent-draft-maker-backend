@@ -6,16 +6,19 @@ import { DRAFTS_TABLE_NAME } from "../TableDefinitions";
 import { DraftEntity } from "./PostgresDraftEntity";
 import PostgresDraftSerializer from "./PostgresDraftSerializer";
 import Logger from "../../../../domain/models/utils/Logger";
-import { ServerError } from "../../../../domain/shared/Errors";
+import { DomainError, ServerError } from "../../../../domain/shared/Errors";
 import DeckRepository from "../../DeckRepository";
+import PostgresBaseRepository from "../PostgresBaseRepository";
 
 @injectable()
-export default class PostgresDraftRepository implements DraftRepository {
+export default class PostgresDraftRepository extends PostgresBaseRepository implements DraftRepository {
   constructor(
-    @inject('Logger') private readonly logger: Logger,
+    @inject('Logger') protected readonly logger: Logger,
     @inject('PostgresLayer') private readonly postgresLayer: PostgresLayer,
     @inject('Repository') @named('Deck') private readonly deckRepository: DeckRepository,
-  ) { }
+  ) {
+    super(logger);
+  }
 
   public async getAll(): Promise<Draft[]> {
     try {
@@ -58,8 +61,11 @@ export default class PostgresDraftRepository implements DraftRepository {
       draft.addDecks(relatedDecks);
       return draft;
     } catch (error) {
-      this.logger.error(`[PostgresDraftRepository][getById] Error getting draft by id: "${id}"`);
-      throw error;
+      throw this.getError(
+        error,
+        `[PostgresDraftRepository][getById] Error getting draft by id: "${id}"`,
+        `[PostgresDraftRepository][getById] Error after getting draft by id: "${id}"`,
+      );
     }
   }
 
@@ -81,8 +87,11 @@ export default class PostgresDraftRepository implements DraftRepository {
       );
       return draft;
     } catch (error) {
-      this.logger.error(`[PostgresDraftRepository][updateExisting] Error updating draft`);
-      throw error;
+      throw this.getError(
+        error,
+        `[PostgresDraftRepository][updateExisting] Error updating draft`,
+        `[PostgresDraftRepository][updateExisting] Error after updating draft`,
+      );
     }
   }
 
@@ -91,11 +100,12 @@ export default class PostgresDraftRepository implements DraftRepository {
       const draftEntityWithoutId = PostgresDraftSerializer.toEntity<true>(draft);
       const result = await this.postgresLayer.pool.query(
         `INSERT INTO ${DRAFTS_TABLE_NAME}
-        (user_id, max_kegs, number_opened_kegs, game_version, available_factions)
-        VALUES ($1, $2, $3, $4, $5)
+        (user_id, name, max_kegs, number_opened_kegs, game_version, available_factions)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *`,
         [
           draftEntityWithoutId.user_id,
+          draftEntityWithoutId.name,
           draftEntityWithoutId.max_kegs,
           draftEntityWithoutId.number_opened_kegs,
           draftEntityWithoutId.game_version,
@@ -104,8 +114,11 @@ export default class PostgresDraftRepository implements DraftRepository {
       );
       return PostgresDraftSerializer.toModel(result.rows[0] as DraftEntity);
     } catch (error) {
-      this.logger.error(`[PostgresDraftRepository] [insertNew] Error inserting new draft`);
-      throw error;
+      throw this.getError(
+        error,
+        `[PostgresDraftRepository][insertNew] Error inserting new draft`,
+        `[PostgresDraftRepository][insertNew] Error after inserting new draft`,
+      );
     }
   }
 }

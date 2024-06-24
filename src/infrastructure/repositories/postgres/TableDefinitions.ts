@@ -20,7 +20,7 @@ export const draftTableDefinition: TableDefinition<DraftEntity> = {
   fields: {
     id: { type: 'serial', isPrimaryKey: true },
     user_id: { type: 'varchar', length: 100 },
-    name: { type: 'varchar', length: 50, nullable: true },
+    name: { type: 'varchar', length: 50 },
     number_opened_kegs: { type: 'smallint' },
     max_kegs: { type: 'smallint' },
     game_version: { type: 'varchar', length: 10 },
@@ -34,7 +34,7 @@ export const deckTableDefinition: TableDefinition<DeckEntity> = {
   fields: {
     id: { type: 'serial', isPrimaryKey: true },
     draft_id: { type: 'serial', references: { table: DRAFTS_TABLE_NAME, field: 'id' } },
-    name: { type: 'varchar', length: 50, nullable: true },
+    name: { type: 'varchar', length: 50 },
     content_version: { type: 'varchar', length: 10 },
     faction: { type: 'char', length: 2 },
   }

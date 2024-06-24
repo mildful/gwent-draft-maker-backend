@@ -22,8 +22,8 @@ export default class DraftService {
   }): Promise<Draft> {
     const draft = new Draft({
       userId,
+      name: options.name || 'Unnamed Draft',
       settings: {
-        name: options.name || 'Unnamed Draft',
         maxKegs: options.maxKegs,
         gameVersion: '1.0.0',
         availableFactions: options.availableFactions,

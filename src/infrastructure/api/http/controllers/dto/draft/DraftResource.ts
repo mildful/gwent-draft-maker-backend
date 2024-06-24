@@ -37,7 +37,7 @@ export default class DraftResource extends BaseResource<DraftDto> {
 
     this._model = model;
     this._dto = {
-      name: model.settings.name,
+      name: model.name,
       numberOpenedKegs: model.numberOpenedKegs,
       maxKegs: model.settings.maxKegs,
       decks: model.decks.map(deck => DeckSerializer.toDto(deck, { isPartOfCollection: true })),

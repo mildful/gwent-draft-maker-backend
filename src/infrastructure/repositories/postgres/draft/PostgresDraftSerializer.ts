@@ -1,14 +1,14 @@
 import Draft from "../../../../domain/models/Draft";
 import Faction, { isValidFaction } from "../../../../domain/models/Faction";
 import { ValidationError } from "../../../../domain/shared/Errors";
-import BaseSerializer from "../BaseSerializer";
+import PostgresBaseSerializer from "../PostgresBaseSerializer";
 import { DraftEntity } from "./PostgresDraftEntity";
 
-const PostgresDraftSerializer: BaseSerializer<Draft, DraftEntity> = {
+const PostgresDraftSerializer: PostgresBaseSerializer<Draft, DraftEntity> = {
   toEntity: (model: Draft) => {
     return {
       id: model.id as number,
-      name: model.settings.name,
+      name: model.name,
       user_id: model.userId,
       max_kegs: model.settings.maxKegs,
       number_opened_kegs: model.numberOpenedKegs,
@@ -33,8 +33,8 @@ const PostgresDraftSerializer: BaseSerializer<Draft, DraftEntity> = {
     return new Draft({
       id: entity.id as number,
       userId: entity.user_id,
+      name: entity.name,
       settings: {
-        name: entity.name,
         maxKegs: entity.max_kegs,
         gameVersion: entity.game_version,
         availableFactions: entity.available_factions as Faction[],

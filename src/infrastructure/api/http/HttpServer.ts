@@ -153,7 +153,7 @@ export default class HttpServer {
       }
 
       return res.status(code).json({
-        message: (code >= 500 && process.env.NODE_ENV === 'production') ? 'An unexpected error occurred' : err.message,
+        message: (code >= 500 && process.env.NODE_ENV === 'production') || (!err.message) ? 'An unexpected error occurred' : err.message,
         code: isDomainError ? err.code : 'GenericError',
         traceId: this.context.get('traceId'),
         data: isDomainError && err.data ? err.data : undefined,

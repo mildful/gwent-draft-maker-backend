@@ -1,10 +1,10 @@
 import Deck from "../../../../domain/models/Deck";
 import Faction, { isValidFaction } from "../../../../domain/models/Faction";
 import { ValidationError } from "../../../../domain/shared/Errors";
-import BaseSerializer from "../BaseSerializer";
+import PostgresBaseSerializer from "../PostgresBaseSerializer";
 import { DeckEntity } from "./PostgresDeckEntity";
 
-const PostgresDeckSerializer: BaseSerializer<Deck, DeckEntity> = {
+const PostgresDeckSerializer: PostgresBaseSerializer<Deck, DeckEntity> = {
   toEntity: (model: Deck) => {
     return {
       id: model.id as number,
