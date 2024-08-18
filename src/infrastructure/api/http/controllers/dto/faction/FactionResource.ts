@@ -18,7 +18,7 @@ export default class FactionResource extends BaseResource<FactionDto> {
   }
 
   public link_createDeckInDraftFromFaction(draftId: number): Link | null {
-    return this._faction != Faction.NEUTRAL ? {
+    return this._faction !== Faction.NEUTRAL ? {
       rel: 'create-deck-from-faction',
       method: 'POST',
       href: `/drafts/${draftId}/decks?faction=${this._faction}`,

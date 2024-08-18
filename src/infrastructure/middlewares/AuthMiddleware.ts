@@ -24,15 +24,10 @@ export class AuthMiddleware extends BaseMiddleware {
     let userId: string;
     try {
       userId = await this.authProvider.verifyToken(token);
-    } catch (err) {
-      return next(err);
-    }
-
-    if (userId) {
       this.context.set('userId', userId);
       return next();
-    } else {
-      return next(new UnauthorizedError('Authentication required'));
+    } catch (err) {
+      return next(err);
     }
   }
 }

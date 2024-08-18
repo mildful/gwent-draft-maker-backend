@@ -8,6 +8,7 @@ module.exports = {
       cors: {
         origins: (process.env.HTTP_SERVER_CORS_ORIGINS || '').split(',').map((v) => { return v.trim(); }).filter((v, i, s) => { return v !== '' && s.indexOf(v) === i; }),
       },
+      version: 'defaultversion',
     }
   },
   auth: {
