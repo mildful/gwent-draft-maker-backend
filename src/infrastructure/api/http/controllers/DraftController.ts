@@ -26,6 +26,7 @@ export class DraftController {
 
   @httpGet('/')
   public async listAllDrafts(): Promise<DtoWithLinks<DraftListDto>> {
+    // TODO: per user based on auth
     const drafts = await this.draftService.listDrafts();
     return DraftListSerializer.toDto(drafts);
   }

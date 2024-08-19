@@ -8,6 +8,7 @@ export enum LogLevel {
 
 export enum Color {
   Red = 31,
+  Gray = 90,
   Green = 32,
   Yellow = 33,
   Blue = 34,

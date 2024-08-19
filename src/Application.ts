@@ -1,7 +1,6 @@
 import axios from 'axios';
 import * as config from 'config';
 import * as firebaseAdmin from 'firebase-admin/app';
-import * as http from 'http';
 import { BindingScopeEnum, Container } from 'inversify';
 import { Pool } from 'pg';
 
@@ -27,12 +26,14 @@ import PostgresLayer from './infrastructure/repositories/postgres/PostgresLayer'
 import PostgresDeckRepository from './infrastructure/repositories/postgres/deck/PostgresDeckRepository';
 import PostgresDraftRepository from './infrastructure/repositories/postgres/draft/PostgresDraftRepository';
 import BcryptHash from './infrastructure/utils/BcryptHash';
+import HypermediaServer from './infrastructure/api/hypermedia/HypermediaServer';
 
 export class Application {
   public readonly container: Container;
   public readonly logger: Logger;
 
   private httpServer: HttpServer;
+  private hypermediaServer: HypermediaServer;
   private config: Config;
   private readonly context: Context;
 
@@ -69,6 +70,16 @@ export class Application {
       );
       await this.httpServer.start();
     }
+
+    if (this.config.server.hypermedia.enabled) {
+      this.hypermediaServer = new HypermediaServer(
+        this.container,
+        this.config.server.hypermedia.port,
+        this.config.server.hypermedia.cors.origins,
+        this.config.logger.middleware,
+      );
+      await this.hypermediaServer.start();
+    }
   }
 
   public async stop(): Promise<void> {
@@ -91,6 +102,14 @@ export class Application {
           port: config.get<number>('server.http.port'),
           cors: {
             origins: config.get<string[]>('server.http.cors.origins'),
+          },
+          version: config.get<string>('server.http.version'),
+        },
+        hypermedia: {
+          enabled: config.get<boolean>('server.hypermedia.enabled'),
+          port: config.get<number>('server.hypermedia.port'),
+          cors: {
+            origins: config.get<string[]>('server.hypermedia.cors.origins'),
           },
         }
       },

@@ -10,6 +10,7 @@ interface LogMiddlewareParams {
   logger: Logger;
   pretty?: boolean;
   enabled?: boolean;
+  prefix?: string;
 }
 
 interface RequestLog {
@@ -29,6 +30,7 @@ export class LogMiddleware {
   private readonly logger: Logger;
   private readonly pretty: boolean;
   private readonly enabled: boolean;
+  private readonly prefix: string;
 
   constructor(private readonly context: Context, params: LogMiddlewareParams) {
     Validator.validate(params, Validator.isObject, 'Log middleware params must be an object');
@@ -36,6 +38,7 @@ export class LogMiddleware {
     this.logger = params.logger;
     this.pretty = Validator.isBoolean(params.pretty) ? params.pretty : false;
     this.enabled = Validator.isBoolean(params.enabled) ? params.enabled : true;
+    this.prefix = Validator.isString(params.prefix) ? params.prefix : '';
   }
 
   public logRequest(req: Request, res: Response, next: NextFunction): void {
@@ -70,7 +73,8 @@ export class LogMiddleware {
 
       const resTime = durationInMs ? `${durationInMs} ms` : '-';
       const size = contentLength || '-';
-      line = `${now.toUTCString()} ${req.method} ${req.url} \x1B[${color}m${code}\x1B[0m ${resTime} - ${size}\n`;
+      const prefix = this.prefix.length > 0 ? `\x1B[${Color.Gray}m${this.prefix}\x1B[0m` : '';
+      line = `${now.toUTCString()} ${prefix} ${req.method} ${req.url} \x1B[${color}m${code}\x1B[0m ${resTime} - ${size}\n`;
     } else {
       const log: RequestLog = {
         traceId,

@@ -13,14 +13,12 @@ import { ContextMiddleware } from '../../middlewares/ContextMiddleware';
 import { AuthMiddleware } from '../../middlewares/AuthMiddleware';
 import { CorsMiddleware } from '../../middlewares/CorsMiddleware';
 import { LogMiddleware } from '../../middlewares/LogMiddleware';
-import { SchemaFileGenerator } from './controllers/dto/SchemaFileGenerator';
 import path = require('path');
 
 // TODO: automatically import based on file system
-import './controllers/DraftController';
-import './controllers/DeckController';
+import './controllers/HxDraftController';
 
-export default class HttpServer {
+export default class HypermediaServer {
   private readonly logger: Logger;
   private readonly context: Context;
   private rawServer: http.Server | null;
@@ -37,10 +35,6 @@ export default class HttpServer {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async start(): Promise<http.Server> {
-    // generate schema file
-    const generator = new SchemaFileGenerator(this.logger)
-    await generator.generateSchemaFile();
-
     if (this.rawServer) {
       return this.rawServer;
     }
@@ -62,7 +56,7 @@ export default class HttpServer {
 
     // Start the server
     this.rawServer = application.listen(this.port, () => {
-      this.logger.info(`HTTP server started on port ${this.port}`);
+      this.logger.info(`Hypermedia server started on port ${this.port}`);
     }) as http.Server;
 
     return this.rawServer;
@@ -92,6 +86,9 @@ export default class HttpServer {
     // this.container.bind('KillSwitchMiddleware').to(KillSwitchMiddleware);
     this.container.bind('AuthMiddleware').to(AuthMiddleware);
 
+    app.set('view engine', 'pug');
+    app.set('views', path.join(__dirname, '/templates'));
+
     const corsMiddleware = new CorsMiddleware(this.corsOrigins);
     app.use(corsMiddleware.addCorsHeaders.bind(corsMiddleware));
 
@@ -108,7 +105,7 @@ export default class HttpServer {
       logger: this.logger,
       pretty: process.env.NODE_ENV === 'development',
       enabled: this.logMiddlewareEnabled,
-      prefix: 'HTTP',
+      prefix: 'Hypermedia',
     });
     app.use(logMiddleware.logRequest.bind(logMiddleware));
   }

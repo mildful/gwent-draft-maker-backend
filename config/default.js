@@ -9,7 +9,14 @@ module.exports = {
         origins: (process.env.HTTP_SERVER_CORS_ORIGINS || '').split(',').map((v) => { return v.trim(); }).filter((v, i, s) => { return v !== '' && s.indexOf(v) === i; }),
       },
       version: 'defaultversion',
-    }
+    },
+    hypermedia: {
+      enabled: process.env.HYPERMEDIA_ENABLED !== 'false',
+      port: process.env.HYPERMEDIA_PORT ? +process.env.HYPERMEDIA_PORT : 8082,
+      cors: {
+        origins: (process.env.HYPERMEDIA_CORS_ORIGINS || '').split(',').map((v) => { return v.trim(); }).filter((v, i, s) => { return v !== '' && s.indexOf(v) === i; }),
+      },
+    },
   },
   auth: {
     firebase: {

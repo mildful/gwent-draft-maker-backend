@@ -4,10 +4,14 @@ export interface HttpServerConfig {
   cors: {
     origins: string[];
   };
+  version: string;
 }
+
+export type HypermediaServerConfig = Omit<HttpServerConfig, 'version'>;
 
 export interface ServerConfig {
   http: HttpServerConfig;
+  hypermedia: HypermediaServerConfig;
 }
 
 export interface FirebaseConfig {
