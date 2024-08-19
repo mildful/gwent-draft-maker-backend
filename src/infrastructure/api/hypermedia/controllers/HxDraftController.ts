@@ -19,6 +19,6 @@ export class HxDraftController {
   @httpGet('')
   public async decks(@response() res: express.Response): Promise<void> {
     const drafts = await this.draftService.listDrafts();
-    res.render('drafts', { drafts: DraftSerializer.multipleToDto(drafts) });
+    res.render('pages/drafts', { drafts: DraftSerializer.multipleToDto(drafts) });
   }
 }

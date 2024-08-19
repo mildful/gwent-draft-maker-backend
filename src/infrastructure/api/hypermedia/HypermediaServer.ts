@@ -86,7 +86,7 @@ export default class HypermediaServer {
     // this.container.bind('KillSwitchMiddleware').to(KillSwitchMiddleware);
     this.container.bind('AuthMiddleware').to(AuthMiddleware);
 
-    app.set('view engine', 'pug');
+    app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, '/templates'));
 
     const corsMiddleware = new CorsMiddleware(this.corsOrigins);
