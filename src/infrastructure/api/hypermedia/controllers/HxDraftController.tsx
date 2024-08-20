@@ -1,11 +1,12 @@
 import { inject, named } from "inversify";
-import { controller, httpGet, response } from "inversify-express-utils";
+import { controller, httpGet } from "inversify-express-utils";
 import DeckService from "../../../../application/services/DeckService";
 import Logger from "../../../../domain/models/utils/Logger";
 import Context from "../../../../domain/models/utils/Context";
 import DraftService from "../../../../application/services/DraftService";
-import express = require("express");
 import DraftSerializer from "../serializers/DraftSerializer";
+
+import DraftPage from '../templates/DraftPage'
 
 @controller('/drafts')
 export class HxDraftController {
@@ -17,8 +18,8 @@ export class HxDraftController {
   ) { }
 
   @httpGet('')
-  public async decks(@response() res: express.Response): Promise<void> {
+  public async decks(): Promise<string> {
     const drafts = await this.draftService.listDrafts();
-    res.render('pages/drafts', { drafts: DraftSerializer.multipleToDto(drafts) });
+    return (<DraftPage drafts={DraftSerializer.multipleToDto(drafts)} />)
   }
 }

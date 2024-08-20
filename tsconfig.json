@@ -14,7 +14,15 @@
     "outDir": "build",
     "resolveJsonModule": true,
     "allowJs": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    // used for templating in a hypermedia server with @kitajs/html
+    "jsx": "react-jsx",
+    "jsxImportSource": "@kitajs/html",
+    "plugins": [
+      {
+        "name": "@kitajs/ts-html-plugin"
+      }
+    ]
   },
   "include": [
     "src",
