@@ -9,7 +9,7 @@
     "rm-dependency": "docker compose -f docker-compose.yml --project-name gwent-draft-maker-backend -f docker-compose.yml down --remove-orphans",
     "drop-database": "ts-node ./scripts/drop-database.ts",
     "build": "rimraf build && tsc -p tsconfig.build.json",
-    "start": "cross-env NODE_ENV=development nodemon -L --watch src -e ts --exec 'ts-node --files --project tsconfig.json src/index.ts'",
+    "start": "cross-env NODE_ENV=development nodemon -L --watch src -e ts,tsx --exec 'ts-node --files --project tsconfig.json src/index.ts'",
     "test": "xss-scan && cross-env jest --maxWorkers=1"
   },
   "author": "Clement Flodrops",

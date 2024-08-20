@@ -88,11 +88,14 @@ export default class HypermediaServer {
 
     app.set('view engine', 'kitajs/html');
     app.set('views', path.join(__dirname, '/templates'));
+    app.disable('etag');
 
     const corsMiddleware = new CorsMiddleware(this.corsOrigins);
     app.use(corsMiddleware.addCorsHeaders.bind(corsMiddleware));
 
-    app.use(helmet());
+    app.use(helmet({
+      contentSecurityPolicy: false
+    }));
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
     app.use(cookieParser());
