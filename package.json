@@ -9,7 +9,9 @@
     "rm-dependency": "docker compose -f docker-compose.yml --project-name gwent-draft-maker-backend -f docker-compose.yml down --remove-orphans",
     "drop-database": "ts-node ./scripts/drop-database.ts",
     "build": "rimraf build && tsc -p tsconfig.build.json",
-    "start": "cross-env NODE_ENV=development nodemon -L --watch src -e ts,tsx --exec 'ts-node --files --project tsconfig.json src/index.ts'",
+    "start:server": "cross-env NODE_ENV=development nodemon -L --watch src -e ts,tsx --exec 'ts-node --files --project tsconfig.json src/index.ts'",
+    "start:css": "cross-env nodemon -L --watch src -e css --exec 'lightningcss --minify --bundle --targets \">= 0.25%\" src/infrastructure/api/hypermedia/templates/index.css -o public/main.css'",
+    "start": "concurrently -n server,css -c bgGreen,bgBlue \"npm run start:server\" \"npm run start:css\"",
     "test": "xss-scan && cross-env jest --maxWorkers=1"
   },
   "author": "Clement Flodrops",
@@ -58,6 +60,7 @@
     "@types/pg": "^8.11.6",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
     "@typescript-eslint/parser": "^7.12.0",
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
